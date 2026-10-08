@@ -34,9 +34,7 @@ env/
 env.bak/
 venv.bak/
 
-# Large Language Model Weights & Checkpoints (Exceeded GitHub 100MB limit; use local downloader)
-models/
-**/models/
+# Large Language Model Weights (>100MB exceeds GitHub hard limit; use local downloader)
 *.safetensors
 *.bin
 *.pt
@@ -45,7 +43,6 @@ models/
 *.h5
 *.msgpack
 *.ckpt
-
 # Offload & HuggingFace caches
 .cache/
 hf_cache/

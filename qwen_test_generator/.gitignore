@@ -3,9 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Large Language Model Weights & Checkpoints
-models/
-**/models/
+# Large Language Model Weights & Checkpoints (>100MB exceeds GitHub push limit)
 *.safetensors
 *.bin
 *.pt
