@@ -35,7 +35,7 @@ env.bak/
 venv.bak/
 
 # Large Language Model Weights (>100MB exceeds GitHub hard limit; use local downloader)
-*.safetensors
+
 *.bin
 *.pt
 *.pth
