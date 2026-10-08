@@ -34,15 +34,6 @@ env/
 env.bak/
 venv.bak/
 
-# Large Language Model Weights (>100MB exceeds GitHub hard limit; use local downloader)
-
-*.bin
-*.pt
-*.pth
-*.onnx
-*.h5
-*.msgpack
-*.ckpt
 # Offload & HuggingFace caches
 .cache/
 hf_cache/
