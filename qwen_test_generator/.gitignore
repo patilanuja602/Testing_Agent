@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large Language Model Weights & Checkpoints
+models/
+**/models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Cache and logs
+.cache/
+hf_cache/
+.offload_cache/
+offload_cache/
+*.log
+
+# Environments and OS files
+.venv/
+.DS_Store
+scratch/

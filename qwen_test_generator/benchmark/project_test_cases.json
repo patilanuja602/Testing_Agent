@@ -1,0 +1,524 @@
+{
+  "total_cases": 34,
+  "cases": [
+    {
+      "id": "UNIT-01",
+      "capability": "Unit Test Generation",
+      "difficulty": "EASY",
+      "title": "Temperature Sensor ADC Scaling",
+      "input": "REQUIREMENT: REQ-TEMP-01\nThe temperature sensor acquisition module shall convert raw 12-bit ADC counts (range 0 to 4095) to temperature in degrees Celsius according to the linear formula: Temperature_C = (raw_adc * 0.0805) - 40.0. The returned value shall be a 32-bit floating-point number. If the input raw_adc count is less than 0 or greater than 4095, the function shall return an error code ERR_ADC_OUT_OF_RANGE (-999.0f).",
+      "expected_focus": "Linear scaling function, normal operating inputs, and out-of-range ADC inputs.",
+      "evaluation_points": [
+        "Covers minimum valid raw ADC (0 -> -40.0 C).",
+        "Covers maximum valid raw ADC (4095 -> ~289.65 C).",
+        "Covers nominal mid-range values (e.g. 2048).",
+        "Covers negative ADC input (< 0) returning error code.",
+        "Covers ADC input > 4095 returning error code.",
+        "Avoids inventing unstated calibration offsets or filtering."
+      ]
+    },
+    {
+      "id": "UNIT-02",
+      "capability": "Unit Test Generation",
+      "difficulty": "EASY",
+      "title": "Low Battery Warning Threshold",
+      "input": "REQUIREMENT: REQ-BAT-02\nThe power management supervisor shall evaluate battery State of Charge (SoC) represented as a percentage (0.0% to 100.0%). When the battery SoC falls strictly below 15.0%, the Low_Battery_Warning flag shall be set to TRUE. When the battery SoC is greater than or equal to 15.0%, the Low_Battery_Warning flag shall be set to FALSE.",
+      "expected_focus": "Boolean conditional threshold logic and exact boundary evaluation at 15.0%.",
+      "evaluation_points": [
+        "Evaluates battery SoC strictly below 15.0% (e.g., 14.9%, 0.0%) sets flag TRUE.",
+        "Evaluates battery SoC exactly at 15.0% sets flag FALSE.",
+        "Evaluates battery SoC above 15.0% (e.g., 15.1%, 100.0%) sets flag FALSE.",
+        "Checks negative percentage or out-of-bounds SoC behavior as an assumption or domain expectation.",
+        "Avoids inventing unstated hysteresis logic."
+      ]
+    },
+    {
+      "id": "UNIT-03",
+      "capability": "Unit Test Generation",
+      "difficulty": "MEDIUM",
+      "title": "Hydraulic Pressure Operating Window",
+      "input": "REQUIREMENT: REQ-HYD-05\nThe hydraulic monitoring unit shall verify the operating system pressure P (in bar). The nominal operating range is defined as 10.0 bar <= P <= 150.0 bar inclusive. If P is within this range, the system status shall be SYSTEM_OK (0). If P is strictly less than 10.0 bar, the system status shall be FAULT_UNDERPRESSURE (1). If P is strictly greater than 150.0 bar, the system status shall be FAULT_OVERPRESSURE (2).",
+      "expected_focus": "Two-sided boundary value analysis (lower and upper limits, exact boundary, inside, outside).",
+      "evaluation_points": [
+        "Tests lower boundary values: 9.9 bar (UNDERPRESSURE), 10.0 bar (OK), 10.1 bar (OK).",
+        "Tests upper boundary values: 149.9 bar (OK), 150.0 bar (OK), 150.1 bar (OVERPRESSURE).",
+        "Tests extreme values (e.g., 0.0 bar, negative bar, very high bar).",
+        "Ensures status return values (0, 1, 2) match explicit requirements.",
+        "Identifies assumptions regarding floating-point comparison precision."
+      ]
+    },
+    {
+      "id": "UNIT-04",
+      "capability": "Unit Test Generation",
+      "difficulty": "MEDIUM",
+      "title": "CAN Message Framing & Payload Validation",
+      "input": "REQUIREMENT: REQ-CAN-12\nThe CAN message parser module receives raw CAN frames and shall validate the following criteria: 1. The 11-bit Message ID must be in the range 0x2F0 to 0x2F7 inclusive. 2. The Data Length Code (DLC) must be exactly 8 bytes. 3. Byte 0 contains a rolling sequence counter (0 to 15 in the lower 4 bits). The counter must increment by 1 (modulo 16) compared to the previously accepted valid frame from the same Message ID. If all criteria are met, the parser shall unpack the frame and return PARSE_SUCCESS (0). If any criterion fails, the frame shall be rejected with specific error codes: ERR_INVALID_ID (1), ERR_INVALID_DLC (2), or ERR_COUNTER_SEQUENCE (3).",
+      "expected_focus": "Multi-field input validation, protocol framing, and sequential state verification.",
+      "evaluation_points": [
+        "Tests valid frames across IDs 0x2F0 through 0x2F7 with DLC=8 and sequential counters.",
+        "Tests ID boundary failures (0x2EF, 0x2F8).",
+        "Tests DLC failures (DLC < 8 and DLC > 8).",
+        "Tests counter rollover sequence (counter 15 followed by 0 is valid).",
+        "Tests counter mismatch (e.g. repeated counter or skipped counter).",
+        "Tests initial frame condition (first frame received) and identifies assumptions if initial counter rule is unstated."
+      ]
+    },
+    {
+      "id": "UNIT-05",
+      "capability": "Unit Test Generation",
+      "difficulty": "MEDIUM",
+      "title": "UART Packet Checksum & Transient Fault Recovery",
+      "input": "REQUIREMENT: REQ-UART-08\nThe sensor communication module receives 10-byte packets over UART. Bytes 0-7 contain payload data, and Bytes 8-9 contain a 16-bit CRC (CRC-16-CCITT). When a packet is received, the module calculates the CRC over the 8 payload bytes. If the calculated CRC matches Bytes 8-9, the payload is accepted, and consecutive_error_count is reset to 0. If the CRC does not match, the packet is discarded, consecutive_error_count is incremented by 1, and the system shall retain and output the last known valid payload. If consecutive_error_count reaches 3, the module shall transition output status to SENSOR_OFFLINE and raise ALARM_COMM_FAIL.",
+      "expected_focus": "CRC verification, transient fault tolerance, error counters, and offline state latching.",
+      "evaluation_points": [
+        "Tests valid packet with matching CRC: payload accepted, error count reset.",
+        "Tests single corrupted packet: packet discarded, last valid data retained, error count = 1.",
+        "Tests two consecutive corrupted packets: error count = 2, last valid data still retained.",
+        "Tests third consecutive corrupted packet: error count = 3, status becomes SENSOR_OFFLINE, alarm raised.",
+        "Tests recovery: valid packet received when error count is 1 or 2 resets counter and prevents SENSOR_OFFLINE.",
+        "Distinguishes explicit threshold (3 consecutive errors) from assumptions regarding recovery after SENSOR_OFFLINE."
+      ]
+    },
+    {
+      "id": "UNIT-06",
+      "capability": "Unit Test Generation",
+      "difficulty": "MEDIUM",
+      "title": "Conveyor Motor Drive State Machine",
+      "input": "REQUIREMENT: REQ-DRV-04\nThe conveyor motor driver state machine supports states: STANDBY (0), ACCELERATING (1), RUNNING (2), BRAKING (3), FAULT_LATCHED (4). Transitions are defined as follows: - In STANDBY: On CMD_START, transition to ACCELERATING. - In ACCELERATING: When current_rpm reaches target_rpm, transition to RUNNING. - In RUNNING: On CMD_STOP, transition to BRAKING. - In BRAKING: When current_rpm drops to 0, transition to STANDBY. - In ANY state: On CMD_EMERGENCY_STOP or HARDWARE_FAULT signal, immediately transition to FAULT_LATCHED and set motor PWM to 0. - In FAULT_LATCHED: The state machine ignores CMD_START and CMD_STOP; only CMD_RESET (when HARDWARE_FAULT is clear) returns state to STANDBY.",
+      "expected_focus": "Finite State Machine (FSM) state transitions, guard conditions, and safety reset behavior.",
+      "evaluation_points": [
+        "Tests nominal cycle: STANDBY -> ACCELERATING -> RUNNING -> BRAKING -> STANDBY.",
+        "Tests emergency stop / fault from all active states (STANDBY, ACCELERATING, RUNNING, BRAKING).",
+        "Tests FAULT_LATCHED behavior: ignoring start/stop commands.",
+        "Tests reset behavior: CMD_RESET with fault cleared returns to STANDBY; CMD_RESET with fault active remains in FAULT_LATCHED.",
+        "Tests invalid events in states (e.g. CMD_START received while already RUNNING)."
+      ]
+    },
+    {
+      "id": "UNIT-07",
+      "capability": "Unit Test Generation",
+      "difficulty": "HARD",
+      "title": "Watchdog Heartbeat Monitor with Timing Tolerances",
+      "input": "REQUIREMENT: REQ-WDG-09\nThe safety watchdog module monitors a remote controller heartbeat. The controller sends periodic heartbeat pulses. The nominal heartbeat period is 100 ms. A heartbeat received sooner than 50 ms since the last pulse is classified as an EARLY_HEARTBEAT_FAULT. If no heartbeat pulse is received within 250 ms since the last valid pulse, a TIMEOUT_FAULT shall be declared. When either EARLY_HEARTBEAT_FAULT or TIMEOUT_FAULT occurs, the safety watchdog output shall drop its SAFE_ENABLE line to LOW within 10 ms. The timer resolution is 1 millisecond.",
+      "expected_focus": "Dual temporal boundaries (too fast, too slow), timer elapsed calculations, and safety line deassertion.",
+      "evaluation_points": [
+        "Tests nominal pulse timing (e.g., pulses at 90ms, 100ms, 110ms keep SAFE_ENABLE HIGH).",
+        "Tests lower boundary: pulse at 50ms (valid) vs pulse at 49ms (EARLY_HEARTBEAT_FAULT, SAFE_ENABLE drops).",
+        "Tests upper boundary: elapsed time reaches 250ms without pulse (TIMEOUT_FAULT, SAFE_ENABLE drops).",
+        "Tests timing tolerance: pulse arriving at 249ms is accepted.",
+        "Tests safety deassertion timing (within 10ms).",
+        "Identifies assumptions regarding initial startup grace period before the first heartbeat."
+      ]
+    },
+    {
+      "id": "UNIT-08",
+      "capability": "Unit Test Generation",
+      "difficulty": "HARD",
+      "title": "Multi-Condition Industrial Burner Interlock",
+      "input": "REQUIREMENT: REQ-FURN-03\nThe industrial furnace controller shall command the Ignition Spark and Main Gas Valve to OPEN only when ALL of the following conditions are simultaneously met: 1. Enclosure Door Interlock switch is CLOSED (boolean TRUE). 2. Combustion Chamber Purge Cycle is COMPLETE (boolean TRUE). 3. Induced Draft Blower differential pressure sensor indicates >= 2.5 kPa. 4. Gas Supply Pressure is within 15.0 kPa <= P_gas <= 35.0 kPa. 5. Flame Detector Optical Sensor indicates NO FLAME (raw flame intensity < 50 lux). If any single condition is false, Ignition Spark shall remain OFF and Main Gas Valve shall remain CLOSED. If any condition becomes false during active burning, Main Gas Valve shall close within 50 ms.",
+      "expected_focus": "Combinatorial condition testing, Modified Condition/Decision Coverage (MC/DC), safety interlocks.",
+      "evaluation_points": [
+        "Tests all 5 conditions true -> Ignition spark ON, valve OPEN.",
+        "Independently tests each condition being false while others are true (MC/DC pairs).",
+        "Tests pressure boundaries: draft pressure at 2.4 kPa vs 2.5 kPa; gas pressure at 14.9, 15.0, 35.0, 35.1 kPa.",
+        "Tests pre-existing flame detection fault (> 50 lux).",
+        "Tests shutdown transition: any condition dropping to false while running causes valve close within 50 ms.",
+        "Flags assumption on whether gas valve closure time is verified in unit or integration test."
+      ]
+    },
+    {
+      "id": "UNIT-09",
+      "capability": "Unit Test Generation",
+      "difficulty": "HARD",
+      "title": "Dual-Channel Brake Pedal Disagreement Detection",
+      "input": "REQUIREMENT: REQ-BRK-11\nThe electronic braking controller reads pedal position from dual redundant sensors: Sensor_A and Sensor_B (both scaled 0.0% to 100.0%). 1. In normal operation, when |Sensor_A - Sensor_B| <= 5.0%, the effective pedal position shall be calculated as (Sensor_A + Sensor_B) / 2.0. 2. If |Sensor_A - Sensor_B| > 5.0% for a continuous duration exceeding 50 ms, the system shall declare a DUAL_CHANNEL_DISAGREEMENT fault. 3. Once DUAL_CHANNEL_DISAGREEMENT is declared, the system shall latch into FAULT_DEGRADED mode: effective pedal position shall be clamped to 0.0%, mechanical fail-safe braking shall be commanded, and the fault shall remain latched until power cycle. 4. Transient discrepancies (|Sensor_A - Sensor_B| > 5.0%) lasting <= 50 ms shall NOT latch the fault, and the previous valid average shall be held.",
+      "expected_focus": "Redundancy management, disagreement thresholds, temporal qualification filters, and latching safety states.",
+      "evaluation_points": [
+        "Tests matching inputs (e.g. A=40%, B=40% -> Output=40%).",
+        "Tests acceptable difference (e.g. A=40%, B=44.9%, diff=4.9% <= 5.0% -> Output=42.45%).",
+        "Tests exact boundary at 5.0% difference (Output is average).",
+        "Tests transient disagreement (> 5.0% for 30 ms -> Output holds last valid average, no fault).",
+        "Tests sustained disagreement (> 5.0% for 51 ms -> DUAL_CHANNEL_DISAGREEMENT latched, output=0.0%).",
+        "Tests latching permanence: inputs returning to agreement after fault declaration does not unlatch fault."
+      ]
+    },
+    {
+      "id": "UNIT-10",
+      "capability": "Unit Test Generation",
+      "difficulty": "HARD",
+      "title": "Ambiguous Cabin Ventilation Requirement",
+      "input": "REQUIREMENT: REQ-VENT-01 (DRAFT)\nThe cabin ventilation controller shall maintain comfortable air quality in the cabin, adjusting fan speed smoothly to avoid excessive noise and prevent dangerous carbon monoxide levels. When the operator turns the manual dial, the system should respond quickly.",
+      "expected_focus": "Ambiguity detection, separating explicit statements from unstated thresholds, avoiding hallucinated criteria.",
+      "evaluation_points": [
+        "Identifies that 'comfortable air quality' has no explicit numerical definition or sensor metric in the requirement.",
+        "Identifies that 'smoothly' and 'excessive noise' lack quantitative decibel or slew-rate limits.",
+        "Identifies that 'dangerous carbon monoxide levels' lacks an explicit ppm threshold and safety response time.",
+        "Identifies that 'respond quickly' lacks an explicit latency or response time specification.",
+        "Generates tests based strictly on testable logical invariants (e.g., fan speed changes monotonically when manual dial changes).",
+        "Explicitly lists assumptions and marks missing specifications as ASSUMPTIONS requiring product owner confirmation rather than inventing numbers."
+      ]
+    },
+    {
+      "id": "INT-01",
+      "capability": "Integration Test Generation",
+      "difficulty": "EASY",
+      "title": "Wheel Speed Sensor to Anti-Skid Controller Integration",
+      "input": "ARCHITECTURE & INTERFACE:\n- WheelSpeedSensor (HW/Driver): Emits variable-frequency square-wave pulses where frequency f = speed_kmh * 10.5 Hz.   Delivers pulses to Controller via Hardware Timer Capture Pin.\n- AntiSkidController (SW): Samples timer capture registers every 10 ms, computes vehicle velocity, and detects wheel deceleration. REQUIREMENT: When the vehicle is moving at 60 km/h (pulse freq = 630 Hz), the Controller shall calculate velocity within +/- 1.0 km/h. If the pulse line goes silent (0 Hz) while vehicle velocity was > 20 km/h, the Controller shall detect SENSOR_DROP within 30 ms.",
+      "expected_focus": "Sensor-to-controller interaction, signal capture to calculated state, and signal loss detection.",
+      "evaluation_points": [
+        "Identifies participating components: WheelSpeedSensor driver and AntiSkidController calculation module.",
+        "Verifies normal data flow: 630 Hz pulse injection -> capture register read -> velocity output = 60.0 +/- 1.0 km/h.",
+        "Verifies failure path: rapid drop from 630 Hz to 0 Hz -> SENSOR_DROP flag set within 30 ms.",
+        "Defines interface stimuli and cross-component expected results.",
+        "Avoids treating as a single isolated math unit test."
+      ]
+    },
+    {
+      "id": "INT-02",
+      "capability": "Integration Test Generation",
+      "difficulty": "EASY",
+      "title": "Electronic Throttle Controller to H-Bridge Actuator",
+      "input": "ARCHITECTURE & INTERFACE:\n- ThrottleController: Computes target throttle angle (0.0% to 100.0%) and outputs a 20 kHz PWM command and DIRECTION pin to H-Bridge Driver.\n- HBridgeActuator: Motor driver that applies motor voltage proportional to PWM duty cycle to drive the throttle plate motor.\n- ThrottlePositionSensor (Feedback): Dual potentiometers reading actual throttle angle returned via ADC to ThrottleController.\nREQUIREMENT: When ThrottleController commands a step change from 10.0% to 50.0% open, the HBridgeActuator shall receive PWM duty increasing in the forward direction. Upon feedback reaching 50.0% (+/- 0.5%), PWM duty cycle shall settle to holding duty within 150 ms.",
+      "expected_focus": "Closed-loop controller-actuator-feedback interaction, transient actuation, and steady-state holding.",
+      "evaluation_points": [
+        "Identifies Controller -> HBridge command interface and Sensor -> Controller feedback interface.",
+        "Verifies forward command sequence: step demand -> increased forward PWM duty cycle.",
+        "Verifies closed-loop convergence: position feedback reaching 50.0% settles PWM within 150 ms.",
+        "Tests actuator stall or sensor disconnection as failure paths.",
+        "Evaluates interaction timing across the loop."
+      ]
+    },
+    {
+      "id": "INT-03",
+      "capability": "Integration Test Generation",
+      "difficulty": "MEDIUM",
+      "title": "Telemetry Logger to SPI Flash Memory Buffer Handshake",
+      "input": "ARCHITECTURE & INTERFACE:\n- TelemetryLogger: Collects 64-byte diagnostic records every 50 ms. Writes records to FlashStorageManager via an asynchronous message queue (capacity: 8 records).\n- FlashStorageManager: Pulls records from the queue and writes to SPI Flash in 256-byte pages (combining 4 records per page write). SPI bus runs at 10 MHz.\nREQUIREMENT:\n1. When TelemetryLogger posts records, FlashStorageManager shall accumulate 4 records and execute a Page_Program command to SPI Flash.\n2. If SPI Flash is BUSY executing a Sector_Erase, FlashStorageManager shall buffer incoming records in the queue without loss.\n3. If the queue fills to 8 records and SPI Flash remains busy, TelemetryLogger shall flag QUEUE_OVERFLOW_WARNING and drop the oldest non-critical record.",
+      "expected_focus": "Inter-module asynchronous queue, backpressure handling, SPI hardware latency, and overflow mitigation.",
+      "evaluation_points": [
+        "Verifies normal 4-record accumulation and page write sequence to SPI Flash.",
+        "Verifies backpressure handling during Sector_Erase latency without record loss while queue < 8.",
+        "Verifies queue saturation behavior at 8 records -> QUEUE_OVERFLOW_WARNING and oldest record drop.",
+        "Verifies queue draining once SPI Flash becomes ready.",
+        "Specifies interaction sequence and message queue state across both modules."
+      ]
+    },
+    {
+      "id": "INT-04",
+      "capability": "Integration Test Generation",
+      "difficulty": "MEDIUM",
+      "title": "Distance Radar to Cruise Controller to Brake Actuator",
+      "input": "ARCHITECTURE & INTERFACE:\n- RadarSensorModule: Transmits target distance and relative velocity over CAN Bus (ID 0x180, 50 ms period) to ACCProcessor.\n- ACCProcessor (Adaptive Cruise Control): Evaluates distance. If distance < safe_distance_threshold, commands deceleration demand to BrakeActuator via private SPI bus.\n- BrakeActuator: Modulates hydraulic brake pressure according to deceleration demand and returns status BRAKE_ACTIVE or BRAKE_STANDBY over SPI.\nREQUIREMENT: When Radar transmits an obstacle decelerating rapidly (distance drops from 50m to 15m at 20 m/s relative speed):\n1. ACCProcessor shall parse CAN 0x180, compute emergency deceleration demand within 40 ms, and transmit SPI command to BrakeActuator.\n2. BrakeActuator shall confirm receipt and report BRAKE_ACTIVE within 25 ms of command receipt.\n3. If CAN 0x180 is missed for >= 150 ms, ACCProcessor shall enter ACC_DEGRADED mode and prompt visual takeover alert before disabling auto-brake.",
+      "expected_focus": "Three-tiered subsystem data flow (Input -> Processing -> Output), protocol bridging (CAN to SPI), and communication loss.",
+      "evaluation_points": [
+        "Tests end-to-end nominal data flow: Radar CAN message -> ACC calculation -> Brake SPI command -> Brake Active confirmation.",
+        "Verifies strict cross-subsystem latency timing (40 ms compute + 25 ms actuation).",
+        "Tests failure path: CAN message timeout (150 ms) -> ACC_DEGRADED transition and takeover alert.",
+        "Tests SPI transmission error or actuator unresponsive behavior.",
+        "Distinguishes component responsibilities and interface boundaries."
+      ]
+    },
+    {
+      "id": "INT-05",
+      "capability": "Integration Test Generation",
+      "difficulty": "MEDIUM",
+      "title": "CAN Transceiver Driver to Engine Controller Message Queue",
+      "input": "ARCHITECTURE & INTERFACE:\n- CAN_Driver: Hardware interrupt-driven transceiver service. Pushes received CAN frames into a prioritized receive FIFO (High, Medium, Low).\n- EngineManagementUnit (EMU): Periodically processes FIFO frames during its 5 ms cyclic execution loop.\nREQUIREMENT:\n1. High-priority torque request frames (ID 0x0C0) must be placed at the head of the FIFO ahead of low-priority diagnostic frames (ID 0x7E0).\n2. Under high bus load (up to 80% bus utilization), EMU shall process all 0x0C0 frames within one 5 ms cycle of arrival without frame drop.\n3. If CAN_Driver detects Bus-Off state due to physical bus errors, it shall signal EVENT_BUS_OFF to EMU, and EMU shall suppress torque command updates and transition to Limp-Home Mode within 10 ms.",
+      "expected_focus": "Hardware driver to software application interaction, message prioritization under bus load, and bus-off fault propagation.",
+      "evaluation_points": [
+        "Verifies priority insertion: 0x0C0 inserted before 0x7E0 in receive FIFO.",
+        "Verifies throughput and timing: high bus load test ensuring 0x0C0 processed within 5 ms cycle.",
+        "Verifies Bus-Off fault propagation: CAN_Driver event -> EMU limp-home mode transition within 10 ms.",
+        "Verifies bus recovery behavior once physical bus is restored.",
+        "Clearly defines cross-layer interactions."
+      ]
+    },
+    {
+      "id": "INT-06",
+      "capability": "Integration Test Generation",
+      "difficulty": "MEDIUM",
+      "title": "Battery Management System Alarm to Vehicle HMI Display",
+      "input": "ARCHITECTURE & INTERFACE:\n- BMS (Battery Management System): Monitors battery pack temperature. If any cell exceeds 60.0\u00b0C, BMS broadcasts ALARM_THERMAL_RUNAWAY on CAN ID 0x3A0 with severity CRITICAL.\n- GatewayModule: Routes CAN ID 0x3A0 from Powertrain CAN bus to Infotainment/HMI Ethernet network as a UDP broadcast packet within 10 ms.\n- InstrumentCluster (HMI): Listens for UDP thermal alarms. Upon receipt, commands red popup warning, initiates continuous 1 kHz audio chime, and logs event to non-volatile crash recorder.\nREQUIREMENT: End-to-end delivery of CRITICAL thermal alarm from BMS cell temperature trigger to HMI visual/acoustic alert activation shall occur within 100 ms.",
+      "expected_focus": "Cross-network bridging (CAN to Ethernet/UDP), multi-node alarm propagation, and end-to-end deadline verification.",
+      "evaluation_points": [
+        "Triggers cell over-temperature in BMS and verifies broadcast on CAN ID 0x3A0.",
+        "Verifies GatewayModule bridging to UDP packet within 10 ms.",
+        "Verifies InstrumentCluster reaction: red popup, audio chime, and NVM log entry.",
+        "Validates end-to-end latency constraint (<= 100 ms).",
+        "Tests gateway packet drop or Ethernet disconnection failure paths.",
+        "Tests alarm clear / recovery sequence."
+      ]
+    },
+    {
+      "id": "INT-07",
+      "capability": "Integration Test Generation",
+      "difficulty": "HARD",
+      "title": "Dual Redundant Flight Computer State Synchronization",
+      "input": "ARCHITECTURE & INTERFACE:\n- FlightComputer_A (Primary) and FlightComputer_B (Secondary/Standby).\n- Cross-Channel Data Link (CCDL): Dual isolated point-to-point full-duplex serial channels running at 1 Mbps.\n- Synchronization Protocol: Every 20 ms minor frame, Primary transmits state vector (pitch, roll, yaw, navigation state, mode).   Secondary receives, compares with its own computed state vector, and sends ACK with its health status.\nREQUIREMENT:\n1. In normal synchronized mode, Primary commands actuators; Secondary matches Primary state.\n2. If Primary state vector diverges from Secondary by > 3.0 degrees in any axis, both units exchange diagnostic voting packets within 10 ms.\n3. If Primary fails internal self-test or stops sending CCDL sync frames for 2 consecutive minor frames (40 ms), Secondary shall immediately   promote itself to Primary, assert Actuator Control line, and log TAKEOVER_PRIMARY.",
+      "expected_focus": "Distributed consensus, redundancy handoff, state synchronization, cross-channel communication failure.",
+      "evaluation_points": [
+        "Tests steady-state synchronization: Primary commands, Secondary acks, states matched.",
+        "Tests sensor divergence handling: divergence > 3.0 deg triggers diagnostic voting exchange within 10 ms.",
+        "Tests primary failure detection: Secondary detects 40 ms timeout (2 missed frames) and promotes itself.",
+        "Tests takeover actuator arbitration: Secondary asserts control line and assumes command.",
+        "Tests split-brain prevention: CCDL channel failure vs actual Primary failure distinction.",
+        "Identifies cross-node state dependencies."
+      ]
+    },
+    {
+      "id": "INT-08",
+      "capability": "Integration Test Generation",
+      "difficulty": "HARD",
+      "title": "I2C Sensor Bus Freeze with Cascading Graceful Degradation",
+      "input": "ARCHITECTURE & INTERFACE:\n- Multi-drop I2C bus connecting PowerManagementModule (Master), TempSensor_1, TempSensor_2, and AmbientSensor.\n- CoolingFanController: Receives fan speed target from PowerManagementModule via UART.\nREQUIREMENT:\n1. PowerManagementModule polls temperature sensors at 10 Hz and calculates optimal fan speed via thermal curve.\n2. If an I2C slave clamps SDA line LOW (bus freeze), PowerManagementModule I2C driver shall detect timeout after 35 ms.\n3. Upon I2C bus timeout, PowerManagementModule shall execute clock-toggling recovery (up to 9 clock pulses on SCL).    If bus recovers, resume normal polling.\n4. If bus does not recover within 100 ms of freeze detection, PowerManagementModule shall enter THERMAL_FAILSAFE mode,    transmit MAXIMUM_FAN_SPEED (100% PWM) command to CoolingFanController via UART, and signal amber warning to main controller.",
+      "expected_focus": "Hardware bus lockup, bus-level recovery sequence, cascading multi-module failover, failsafe actuator commanding.",
+      "evaluation_points": [
+        "Tests nominal polling and fan speed command updates via UART.",
+        "Tests I2C bus lockup simulation (SDA held low) -> 35 ms timeout detection.",
+        "Tests successful clock toggling recovery (bus freed within 9 pulses) -> resumes normal operation.",
+        "Tests unsuccessful recovery (> 100 ms) -> transitions to THERMAL_FAILSAFE.",
+        "Verifies cascading reaction: CoolingFanController receives 100% fan speed command over UART.",
+        "Verifies amber warning signal emitted to main controller."
+      ]
+    },
+    {
+      "id": "MISRA-01",
+      "capability": "MISRA / Static Analysis",
+      "difficulty": "EASY",
+      "title": "Implicit Essential Type Conversion in Arithmetic",
+      "input": "STATIC ANALYSIS WARNING REPORT:\n- Tool: Helix QAC / PC-lint\n- Rule ID: MISRA C:2012 Rule 10.3 (Required)\n- Description: The value of an expression shall not be assigned to an object with a narrower essential type or of a different essential type category.\n- File: motor_control.c, Line 42\n- Code Context:\n  uint8_t base_offset = 10U;\n  int16_t temperature_delta = -5;\n  uint16_t adjusted_pwm;\n  /* Line 42: */\n  adjusted_pwm = base_offset + temperature_delta;\n",
+      "expected_focus": "Essential type model, implicit promotion to signed int, assigning signed result to unsigned uint16_t, potential underflow.",
+      "evaluation_points": [
+        "Explains that base_offset (essentially unsigned) and temperature_delta (essentially signed) result in signed arithmetic that is assigned to unsigned uint16_t.",
+        "Identifies risk: if temperature_delta is negative and exceeds base_offset, expression becomes negative, wrapping to huge positive value (~65530) when converted to uint16_t.",
+        "Provides clean remediation: explicit bounds checking and appropriate casting or signed intermediate calculation.",
+        "Avoids claiming this is a false positive (it is a genuine bug and violation).",
+        "Identifies unit test cases needed (e.g. temperature_delta < -base_offset)."
+      ]
+    },
+    {
+      "id": "MISRA-02",
+      "capability": "MISRA / Static Analysis",
+      "difficulty": "EASY",
+      "title": "Non-Boolean Controlling Expression in If Statement",
+      "input": "STATIC ANALYSIS WARNING REPORT:\n- Tool: Polyspace Bug Finder\n- Rule ID: MISRA C:2012 Rule 14.4 (Required)\n- Description: The controlling expression of an if statement and the controlling expression of an iteration-statement shall have essentially Boolean type.\n- File: comm_handler.c, Line 118\n- Code Context:\n  uint8_t rx_status_flags = get_uart_flags();\n  /* Line 118: */\n  if (rx_status_flags & 0x04U)\n  {\n      handle_buffer_overflow();\n  }\n",
+      "expected_focus": "Controlling expression type, bitwise operation producing integer rather than boolean type.",
+      "evaluation_points": [
+        "Explains that (rx_status_flags & 0x04U) yields an essentially unsigned integer type, not an essentially Boolean type.",
+        "Assesses risk: relatively low functional risk in this specific snippet, but violates strict safety-critical clarity guidelines.",
+        "Provides clean remediation: explicit comparison against zero: `if ((rx_status_flags & 0x04U) != 0U)` or using boolean helper.",
+        "Identifies that finding is technically valid according to MISRA C:2012 rule.",
+        "Suggests unit test verifying overflow handler triggers when bit 2 is set and does not when clear."
+      ]
+    },
+    {
+      "id": "MISRA-03",
+      "capability": "MISRA / Static Analysis",
+      "difficulty": "MEDIUM",
+      "title": "Discarded Return Value of Hardware Write Function",
+      "input": "STATIC ANALYSIS WARNING REPORT:\n- Tool: Coverity\n- Rule ID: MISRA C:2012 Rule 17.7 (Required)\n- Description: The value returned by a function having non-void return type shall be used.\n- File: flash_driver.c, Line 87\n- Code Context:\n  /* flash_status_t spi_flash_write_sector(uint32_t addr, const uint8_t *buf, size_t len); */\n  /* Line 87: */\n  spi_flash_write_sector(sector_addr, page_data, 256U);\n  g_write_count++;\n",
+      "expected_focus": "Unchecked function return value, silent hardware write failures, data corruption risk.",
+      "evaluation_points": [
+        "Explains that spi_flash_write_sector returns flash_status_t which is completely ignored.",
+        "Identifies severe risk: write failure (e.g. write protected, busy, hardware fault) goes undetected while write counter increments.",
+        "Provides remediation: evaluate return code, handle errors (retry or escalate), and update count only on success.",
+        "Identifies that if return value was intentionally ignored (not recommended here), explicit `(void)` cast is required by MISRA, but proper error handling is preferred.",
+        "Specifies test impact: negative tests simulating write failure return code."
+      ]
+    },
+    {
+      "id": "MISRA-04",
+      "capability": "MISRA / Static Analysis",
+      "difficulty": "MEDIUM",
+      "title": "Pointer to Object and Integer Conversion for Memory-Mapped I/O",
+      "input": "STATIC ANALYSIS WARNING REPORT:\n- Tool: Axivion Suite\n- Rule ID: MISRA C:2012 Rule 11.4 (Advisory) & Rule 11.6 (Required)\n- Description: A conversion should not be performed between a pointer to object and an integral type; A cast shall not be performed between a pointer to void and an integral type.\n- File: bsp_gpio.c, Line 24\n- Code Context:\n  #define GPIOA_ODR_ADDR (0x40020014UL)\n  /* Line 24: */\n  #define GPIOA_ODR (*((volatile uint32_t *)GPIOA_ODR_ADDR))\n  void set_pin_high(void) {\n      GPIOA_ODR |= (1UL << 5U);\n  }\n",
+      "expected_focus": "Memory-mapped I/O in embedded systems, casting integer literals to volatile pointers, standard MISRA deviation practices.",
+      "evaluation_points": [
+        "Recognizes this is the standard embedded idiom for memory-mapped hardware peripheral register access.",
+        "Explains that casting integer address (0x40020014UL) to pointer violates Rule 11.4/11.6.",
+        "Identifies risk: arbitrary integer casting can cause undefined behavior or alignment faults if address is invalid.",
+        "Notes that in low-level Board Support Package (BSP) code, this construct is necessary and typically handled via an approved project deviation or encapsulated in certified hardware header files.",
+        "Avoids fabricating an existing company deviation approval; states clearly that human architectural review is required."
+      ]
+    },
+    {
+      "id": "MISRA-05",
+      "capability": "MISRA / Static Analysis",
+      "difficulty": "MEDIUM",
+      "title": "Shift Operator Right-Hand Operand Bounds",
+      "input": "STATIC ANALYSIS WARNING REPORT:\n- Tool: Klocwork\n- Rule ID: MISRA C:2012 Rule 12.2 (Required)\n- Description: The right hand operand of a shift operator shall lie in the range zero to one less than the width in bits of the essential type of the left hand operand.\n- File: bit_utils.c, Line 65\n- Code Context:\n  uint32_t create_bitmask(uint8_t bit_position)\n  {\n      /* Line 65: */\n      return (1U << bit_position);\n  }\n",
+      "expected_focus": "Undefined behavior from overshifting, width of left operand (1U is 16 or 32 bits), input parameter bounds.",
+      "evaluation_points": [
+        "Explains that bit_position (uint8_t) can take values up to 255.",
+        "Explains that shifting by >= bit-width of operand (e.g. >= 32 bits on 32-bit architecture) results in undefined behavior under C standard.",
+        "Notes that 1U has integer type; if int is 16-bit, shifting >= 16 is undefined; if 32-bit, shifting >= 32 is undefined.",
+        "Provides remediation: explicit bounds checking (`if (bit_position < 32U)`) and using `1UL` or `1ULL` matching explicit type width.",
+        "Recommends test cases covering bit_position = 0, 31, 32, and 255."
+      ]
+    },
+    {
+      "id": "MISRA-06",
+      "capability": "MISRA / Static Analysis",
+      "difficulty": "MEDIUM",
+      "title": "Missing External Declaration in Header File",
+      "input": "STATIC ANALYSIS WARNING REPORT:\n- Tool: SonarQube / Cppcheck\n- Rule ID: MISRA C:2012 Rule 8.4 (Required)\n- Description: A compatible declaration shall be visible when an object or function with external linkage is defined.\n- File: system_timer.c, Line 15\n- Code Context:\n  /* File: system_timer.c */\n  #include \"system_timer.h\"\n  /* Line 15: */\n  uint32_t system_uptime_seconds = 0U;\n  /* Note: system_timer.h contains: void init_timer(void); uint32_t get_ticks(void); */\n",
+      "expected_focus": "External linkage without prototype, global variable pollution, potential type mismatch across translation units.",
+      "evaluation_points": [
+        "Explains that system_uptime_seconds has external linkage because it lacks the static storage-class specifier, but is not declared in system_timer.h.",
+        "Identifies risk: other translation units may declare `extern uint32_t system_uptime_seconds;` or `extern int system_uptime_seconds;` without compiler type checking.",
+        "Provides remediation options: if variable is private to system_timer.c, declare as `static uint32_t system_uptime_seconds = 0U;`; if intended to be public, add `extern uint32_t system_uptime_seconds;` to system_timer.h.",
+        "Identifies that static encapsulation is the preferred safety-critical approach."
+      ]
+    },
+    {
+      "id": "MISRA-07",
+      "capability": "MISRA / Static Analysis",
+      "difficulty": "HARD",
+      "title": "Dynamic Memory Allocation in Embedded Runtime",
+      "input": "STATIC ANALYSIS WARNING REPORT:\n- Tool: LDRA Testbed\n- Rule ID: MISRA C:2012 Rule 21.3 (Required)\n- Description: The memory allocation and deallocation functions of <stdlib.h> shall not be used (malloc, calloc, realloc, free).\n- File: packet_processor.c, Line 102\n- Code Context:\n  bool process_incoming_packet(const uint8_t *raw_buf, size_t len) {\n      /* Line 102: */\n      uint8_t *work_buffer = (uint8_t *)malloc(len);\n      if (work_buffer == NULL) {\n          return false;\n      }\n      memcpy(work_buffer, raw_buf, len);\n      bool ok = decode_payload(work_buffer, len);\n      free(work_buffer);\n      return ok;\n  }\n",
+      "expected_focus": "Dynamic memory allocation in safety-critical systems, heap fragmentation, non-deterministic allocation time, allocation failure handling.",
+      "evaluation_points": [
+        "Explains the rationale for Rule 21.3: dynamic heap allocation causes non-deterministic timing, memory fragmentation, and risk of heap exhaustion.",
+        "Assesses severe risk: if malloc fails under load, incoming packets are dropped; in an ISR or cyclic loop, system can crash or miss deadlines.",
+        "Provides remediation: replace dynamic allocation with a statically allocated buffer (sized to maximum permissible packet size) or dedicated fixed-block memory pool.",
+        "Recommends test impact: testing with maximum packet length to verify buffer capacity without heap usage."
+      ]
+    },
+    {
+      "id": "MISRA-08",
+      "capability": "MISRA / Static Analysis",
+      "difficulty": "HARD",
+      "title": "Potentially Uninitialized Automatic Variable with Incomplete Context",
+      "input": "STATIC ANALYSIS WARNING REPORT:\n- Tool: Helix QAC\n- Rule ID: MISRA C:2012 Rule 9.1 (Mandatory)\n- Description: The value of an object with automatic storage duration shall not be read before it has been set.\n- File: flow_calculator.c, Line 58\n- Code Context:\n  status_t compute_flow(uint8_t mode, uint16_t raw_val, float *out_flow)\n  {\n      float intermediate_rate;\n      status_t st;\n      if (mode == 1U) {\n          st = calibrate_sensor(raw_val, &intermediate_rate);\n      } else if (mode == 2U) {\n          intermediate_rate = (float)raw_val * 1.5f;\n          st = STATUS_OK;\n      } else {\n          st = STATUS_INVALID_MODE;\n      }\n      /* Line 58: */\n      *out_flow = intermediate_rate + 2.0f;\n      return st;\n  }\nNOTE: The implementation of calibrate_sensor() is in another translation unit (calibration.c) and is NOT provided here.",
+      "expected_focus": "Uninitialized variable paths, missing external implementation, uncertainty handling, avoiding false-positive claim.",
+      "evaluation_points": [
+        "Identifies that when mode != 1 and mode != 2 (the else branch), intermediate_rate is NEVER assigned, yet line 58 unconditionally reads it.",
+        "Identifies that for mode == 1, whether intermediate_rate is set depends on calibrate_sensor(); if calibrate_sensor fails and returns an error without writing to the pointer, intermediate_rate remains uninitialized.",
+        "Explicitly states that for mode == 1, there is INSUFFICIENT INFORMATION TO DETERMINE whether calibrate_sensor guarantees pointer write on error.",
+        "Identifies definite bug on mode != 1 && mode != 2 path (unconditional dereference of uninitialized variable).",
+        "Provides remediation: initialize intermediate_rate or return early on st != STATUS_OK before line 58."
+      ]
+    },
+    {
+      "id": "REG-01",
+      "capability": "Regression Suite Upkeep",
+      "difficulty": "EASY",
+      "title": "Battery Over-Temperature Warning Threshold Lowered",
+      "input": "EXISTING REQUIREMENT: REQ-TEMP-04\nThe battery supervisor shall monitor battery pack temperature T in degrees C. If T > 60.0\u00b0C, the supervisor shall set OVERTEMP_ALERT = TRUE. Otherwise OVERTEMP_ALERT = FALSE.\n\nEXISTING TEST CASES:\n- TC_01: Input T = 55.0\u00b0C -> Expected: OVERTEMP_ALERT = FALSE (Normal condition)\n- TC_02: Input T = 60.0\u00b0C -> Expected: OVERTEMP_ALERT = FALSE (Boundary check)\n- TC_03: Input T = 60.1\u00b0C -> Expected: OVERTEMP_ALERT = TRUE (Boundary check)\n- TC_04: Input T = 75.0\u00b0C -> Expected: OVERTEMP_ALERT = TRUE (High temperature)\n\nCHANGED REQUIREMENT: REQ-TEMP-04 (REV B)\nThe battery supervisor shall monitor battery pack temperature T in degrees C. If T > 55.0\u00b0C, the supervisor shall set OVERTEMP_ALERT = TRUE. Otherwise OVERTEMP_ALERT = FALSE.",
+      "expected_focus": "Impact analysis on boundary threshold reduction (60.0\u00b0C -> 55.0\u00b0C).",
+      "evaluation_points": [
+        "Identifies tests that remain valid without change: TC_04 (75.0\u00b0C -> TRUE still holds).",
+        "Identifies tests whose expected results have changed or are now invalid: TC_01 (55.0\u00b0C was FALSE, now boundary FALSE at 55.0), TC_02 (60.0\u00b0C was FALSE, now MUST BE TRUE).",
+        "Identifies obsolete test: TC_03 (60.1\u00b0C boundary is obsolete for 55.0\u00b0C threshold).",
+        "Identifies tests to add: new boundary tests around 55.0\u00b0C (e.g. 54.9\u00b0C -> FALSE, 55.0\u00b0C -> FALSE, 55.1\u00b0C -> TRUE).",
+        "Provides clear justification for each test modification."
+      ]
+    },
+    {
+      "id": "REG-02",
+      "capability": "Regression Suite Upkeep",
+      "difficulty": "EASY",
+      "title": "Expanded Telemetry Packet Payload Size",
+      "input": "EXISTING REQUIREMENT: REQ-COMM-02\nThe telemetry transmitter shall accept payloads up to 64 bytes in length. If payload_length is 0 or > 64, the transmit function shall return ERR_INVALID_LENGTH.\n\nEXISTING TEST CASES:\n- TC_10: payload_len = 1 byte -> Expected: SUCCESS\n- TC_11: payload_len = 64 bytes -> Expected: SUCCESS (Maximum boundary)\n- TC_12: payload_len = 65 bytes -> Expected: ERR_INVALID_LENGTH (Negative boundary)\n- TC_13: payload_len = 0 bytes -> Expected: ERR_INVALID_LENGTH (Zero boundary)\n\nCHANGED REQUIREMENT: REQ-COMM-02 (REV B)\nThe telemetry transmitter shall accept payloads up to 128 bytes in length. If payload_length is 0 or > 128, the transmit function shall return ERR_INVALID_LENGTH.",
+      "expected_focus": "Impact analysis on maximum length extension (64 -> 128 bytes).",
+      "evaluation_points": [
+        "Identifies tests that remain valid: TC_10 (1 byte SUCCESS), TC_13 (0 bytes ERR_INVALID_LENGTH).",
+        "Identifies tests whose expectation is inverted / broken: TC_12 (65 bytes was ERR_INVALID_LENGTH, now Expected SUCCESS).",
+        "Identifies obsolete boundary test: TC_11 (64 bytes is now an arbitrary mid-range value, no longer upper boundary).",
+        "Identifies new tests required: 128 bytes (new max boundary SUCCESS), 129 bytes (new negative boundary ERR_INVALID_LENGTH).",
+        "Distinguishes between unit packet validation and buffer allocation impacts."
+      ]
+    },
+    {
+      "id": "REG-03",
+      "capability": "Regression Suite Upkeep",
+      "difficulty": "MEDIUM",
+      "title": "Introduction of Pre-Armed Safety State",
+      "input": "EXISTING REQUIREMENT: REQ-ARM-01\nThe system state machine has states DISARMED (0) and ARMED (1). On receiving CMD_ARM while in DISARMED, the system shall transition immediately to ARMED.\n\nEXISTING TEST CASES:\n- TC_ARM_01: In DISARMED, send CMD_ARM -> Expected: State transitions immediately to ARMED.\n- TC_ARM_02: In ARMED, send CMD_ARM -> Expected: State remains ARMED.\n- TC_ARM_03: In DISARMED, trigger actuator -> Expected: Actuator command rejected.\n- TC_ARM_04: In ARMED, trigger actuator -> Expected: Actuator command accepted.\n\nCHANGED REQUIREMENT: REQ-ARM-01 (REV B)\nThe system state machine introduces an intermediate state PRE_ARMED (2). On receiving CMD_ARM while in DISARMED, the system shall transition to PRE_ARMED. The system shall remain in PRE_ARMED for exactly 500 ms while running self-checks. If self-checks pass after 500 ms, the system transitions to ARMED. If CMD_DISARM is received or self-checks fail during the 500 ms, the system transitions back to DISARMED. Actuator commands are rejected in PRE_ARMED.",
+      "expected_focus": "State machine structural change, intermediate state insertion, temporal holding, and test obsolescence.",
+      "evaluation_points": [
+        "Identifies broken/obsolete test: TC_ARM_01 is directly broken (immediate transition to ARMED no longer occurs).",
+        "Identifies tests that remain valid: TC_ARM_03 (actuator rejected in DISARMED), TC_ARM_04 (actuator accepted in ARMED).",
+        "Identifies tests to add: transition from DISARMED to PRE_ARMED on CMD_ARM; 500 ms wait + self-checks passing -> ARMED.",
+        "Identifies negative/abort tests to add: CMD_DISARM received during PRE_ARMED -> returns to DISARMED; self-check failure during PRE_ARMED -> returns to DISARMED.",
+        "Identifies verification of actuator rejection while in PRE_ARMED."
+      ]
+    },
+    {
+      "id": "REG-04",
+      "capability": "Regression Suite Upkeep",
+      "difficulty": "MEDIUM",
+      "title": "Heartbeat Timeout Reduction with Retry Policy",
+      "input": "EXISTING REQUIREMENT: REQ-HEART-03\nThe controller shall monitor the remote node heartbeat. If no heartbeat packet is received within 1000 ms, the controller shall immediately declare COMM_LOST and enter SAFE_STOP mode.\n\nEXISTING TEST CASES:\n- TC_HB_01: Heartbeat arrives every 500 ms -> Expected: System remains OPERATIONAL.\n- TC_HB_02: Heartbeat absent for 999 ms -> Expected: System remains OPERATIONAL.\n- TC_HB_03: Heartbeat absent for 1000 ms -> Expected: COMM_LOST declared, SAFE_STOP entered immediately.\n\nCHANGED REQUIREMENT: REQ-HEART-03 (REV B)\nThe controller shall monitor the remote node heartbeat. If no heartbeat packet is received within 250 ms, the controller shall transmit a PING_RETRY request and wait up to 2 additional 250 ms retry windows (total 3 attempts). Only if all 3 retry attempts elapse without a response (total 750 ms without heartbeat) shall the controller declare COMM_LOST and enter SAFE_STOP mode.",
+      "expected_focus": "Timing window change (1000ms -> 250ms), addition of retry protocol state machine, and total timeout calculation.",
+      "evaluation_points": [
+        "Identifies that TC_HB_01 is now INVALID/FAILS: Heartbeat every 500 ms was valid when timeout was 1000 ms, but will now trigger retry at 250 ms.",
+        "Identifies that TC_HB_02 (999 ms) and TC_HB_03 (1000 ms) are obsolete because total timeout is now 750 ms (3x 250 ms).",
+        "Identifies tests to add: PING_RETRY sent after 250 ms silence.",
+        "Identifies recovery test: heartbeat received during retry attempt 1 or 2 resets counter and restores OPERATIONAL status.",
+        "Identifies new terminal timeout test: 3 consecutive 250 ms silences (750 ms total) -> declares COMM_LOST and enters SAFE_STOP."
+      ]
+    },
+    {
+      "id": "REG-05",
+      "capability": "Regression Suite Upkeep",
+      "difficulty": "MEDIUM",
+      "title": "Fail-Stop Replaced by Dead-Reckoning Grace Period",
+      "input": "EXISTING REQUIREMENT: REQ-NAV-07\nWhen the GPS positioning signal is lost (GPS_FIX_LOST == TRUE), the autonomous vehicle controller shall immediately apply emergency brakes (EMERGENCY_BRAKE = TRUE) and halt navigation.\n\nEXISTING TEST CASES:\n- TC_NAV_01: GPS_FIX_LOST becomes TRUE -> Expected: EMERGENCY_BRAKE commanded on next 10 ms cycle.\n- TC_NAV_02: GPS_FIX remains TRUE -> Expected: Vehicle stays stopped.\n\nCHANGED REQUIREMENT: REQ-NAV-07 (REV B)\nWhen GPS_FIX_LOST becomes TRUE, the controller shall NOT immediately apply emergency brakes. Instead, the controller shall switch to DEAD_RECKONING mode using wheel odometry and IMU for up to a 5.0-second grace period. If GPS_FIX is regained within 5.0 seconds, normal navigation shall resume seamlessly. Only if GPS_FIX remains lost after 5.0 seconds shall the controller apply EMERGENCY_BRAKE and halt navigation.",
+      "expected_focus": "Immediate fail-safe replaced with delayed fail-soft graceful degradation, timer evaluation, recovery path.",
+      "evaluation_points": [
+        "Identifies that TC_NAV_01 is directly contradicted and broken (emergency brake must NOT engage on next 10 ms cycle).",
+        "Identifies that TC_NAV_02 needs modification (vehicle must not stay stopped immediately; it dead-reckons for 5s).",
+        "Identifies new tests required: GPS lost -> DEAD_RECKONING mode active, odometry/IMU engaged, no emergency brake.",
+        "Identifies recovery test: GPS restored at t = 3.0s -> seamless return to normal navigation, timer reset.",
+        "Identifies timeout test: GPS lost for >= 5.0s -> EMERGENCY_BRAKE engaged and navigation halted."
+      ]
+    },
+    {
+      "id": "REG-06",
+      "capability": "Regression Suite Upkeep",
+      "difficulty": "MEDIUM",
+      "title": "Addition of Cryptographic Signature Check to OTA Firmware",
+      "input": "EXISTING REQUIREMENT: REQ-OTA-02\nThe Over-The-Air (OTA) update module shall verify the integrity of the downloaded firmware image by computing its SHA-256 hash. If the computed hash matches the hash header in the manifest, the image shall be marked IMAGE_VALID and staged for installation.\n\nEXISTING TEST CASES:\n- TC_OTA_01: Firmware image with valid SHA-256 hash -> Expected: Marked IMAGE_VALID and staged.\n- TC_OTA_02: Firmware image with 1-byte corrupted in binary -> Expected: Marked IMAGE_CORRUPT, discarded.\n- TC_OTA_03: Manifest with missing hash header -> Expected: Marked IMAGE_REJECTED.\n\nCHANGED REQUIREMENT: REQ-OTA-02 (REV B)\nThe OTA update module shall verify BOTH integrity and authenticity: 1. Compute SHA-256 hash and verify match against manifest header. 2. Verify the ECDSA secp256r1 cryptographic digital signature of the hash using the embedded public key. The image shall be marked IMAGE_VALID only if BOTH SHA-256 match AND ECDSA signature verification succeeds. If the SHA-256 matches but signature verification fails, the image shall be marked IMAGE_AUTH_FAILED and logged as a security alert.",
+      "expected_focus": "New security prerequisite added to existing integrity check, new failure modes, impact on valid image test.",
+      "evaluation_points": [
+        "Identifies impact on TC_OTA_01: Previously passing test will FAIL if the test image does not have an attached valid ECDSA signature.",
+        "Identifies that TC_OTA_02 and TC_OTA_03 remain largely valid (hash failure still rejects before/during processing).",
+        "Identifies new test cases needed: Image with valid hash AND valid signature -> IMAGE_VALID.",
+        "Identifies new test cases needed: Image with valid hash BUT invalid signature -> IMAGE_AUTH_FAILED + security alert logged.",
+        "Identifies new test cases needed: Image with valid hash BUT expired/revoked key."
+      ]
+    },
+    {
+      "id": "REG-07",
+      "capability": "Regression Suite Upkeep",
+      "difficulty": "HARD",
+      "title": "Deprecation of Serial Interface in Favor of CAN-FD",
+      "input": "EXISTING REQUIREMENT: REQ-IF-01 & REQ-IF-02\n- REQ-IF-01: The motor calibration tool shall accept calibration commands over RS-232 serial at 115200 baud.\n- REQ-IF-02: The motor calibration tool shall accept calibration commands over CAN-FD at 2 Mbps.\n\nEXISTING TEST CASES:\n- TC_SER_01: Send CALIBRATE_OFFSET over RS-232 -> Expected: Calibration applied, ACK returned on RS-232.\n- TC_SER_02: Send invalid baud rate on RS-232 -> Expected: Framing error logged.\n- TC_CAN_01: Send CALIBRATE_OFFSET over CAN-FD -> Expected: Calibration applied, ACK returned on CAN-FD.\n- TC_CAN_02: Send corrupted CRC on CAN-FD -> Expected: Error frame returned.\n\nCHANGED REQUIREMENT: REQ-IF-01 (DEPRECATED & REMOVED), REQ-IF-02 (MODIFIED)\nRS-232 serial interface is completely decommissioned and the physical UART peripheral is disabled in software. All calibration commands shall exclusively be accepted over CAN-FD at 2 Mbps. Commands received on CAN-FD must now include a 16-bit Session Security Token.",
+      "expected_focus": "Feature deprecation, test obsolescence, interface removal, and existing test modification.",
+      "evaluation_points": [
+        "Identifies obsolete tests to be DELETED/REMOVED: TC_SER_01 and TC_SER_02 (RS-232 interface is removed).",
+        "Identifies existing CAN-FD tests that need MODIFICATION: TC_CAN_01 needs update to include 16-bit Session Security Token.",
+        "Identifies tests to add: CAN-FD command with invalid/missing Session Security Token rejected.",
+        "Verifies that UART pins remain dormant / uninitialized.",
+        "Assesses impact on regression suite maintenance overhead."
+      ]
+    },
+    {
+      "id": "REG-08",
+      "capability": "Regression Suite Upkeep",
+      "difficulty": "HARD",
+      "title": "Refactoring Actuator API Signature and Return Type",
+      "input": "EXISTING REQUIREMENT: REQ-API-05\nThe low-level pump driver shall provide the function:\n  bool set_pump_rate(int rate);\nWhere rate is an integer 0 to 100 (percentage). Returns true if rate set successfully, false if rate < 0 or > 100.\n\nEXISTING TEST CASES:\n- TC_PUMP_01: Call set_pump_rate(50) -> Returns true, hardware PWM updated.\n- TC_PUMP_02: Call set_pump_rate(0) -> Returns true, hardware PWM = 0.\n- TC_PUMP_03: Call set_pump_rate(100) -> Returns true, hardware PWM = max.\n- TC_PUMP_04: Call set_pump_rate(-1) -> Returns false.\n- TC_PUMP_05: Call set_pump_rate(101) -> Returns false.\n\nCHANGED REQUIREMENT: REQ-API-05 (REV B)\nThe pump driver is refactored to support multiple pumps and calibrated flow rates:\n  status_t set_pump_flow(pump_id_t pump_id, float flow_lpm, pump_diag_t *out_diag);\nParameters:\n- pump_id: enum PUMP_1 (0) or PUMP_2 (1). Invalid ID returns ERR_INVALID_PUMP.\n- flow_lpm: floating-point flow rate in liters per minute, valid range 0.0f to 25.0f. Invalid flow returns ERR_OUT_OF_RANGE.\n- out_diag: pointer to telemetry structure filled with current pump current and temperature. If NULL, returns ERR_NULL_POINTER.\nReturns: STATUS_OK (0) on success.",
+      "expected_focus": "Signature refactoring, type changes (int to float, bool to enum status_t), new multi-instance parameter, pointer validation.",
+      "evaluation_points": [
+        "Identifies that ALL 5 existing unit tests will fail to compile because function name, signature, and return types are completely changed.",
+        "Maps existing rate test cases to new flow_lpm parameter: TC_PUMP_02 (0% -> 0.0 lpm), TC_PUMP_03 (100% -> 25.0 lpm), TC_PUMP_04 (-1 -> < 0.0f), TC_PUMP_05 (101 -> > 25.0f).",
+        "Identifies new return code expectations: ERR_OUT_OF_RANGE instead of false; STATUS_OK instead of true.",
+        "Identifies new test cases to add: pump_id testing (PUMP_1, PUMP_2 valid; invalid ID e.g. 2 -> ERR_INVALID_PUMP).",
+        "Identifies pointer validation test to add: out_diag == NULL -> ERR_NULL_POINTER.",
+        "Verifies diagnostic telemetry populated in out_diag."
+      ]
+    }
+  ]
+}

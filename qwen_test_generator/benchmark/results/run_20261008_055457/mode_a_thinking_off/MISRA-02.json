@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-10-08T06:07:46.716202+00:00",
+  "model": "Qwen3-8B",
+  "model_path": "./models/Qwen3-8B",
+  "quantization": "4-bit NF4",
+  "gpu": "NVIDIA GeForce RTX 4060",
+  "mode": "MODE_A_THINKING_OFF",
+  "thinking_mode": false,
+  "capability": "MISRA / Static Analysis",
+  "case_id": "MISRA-02",
+  "difficulty": "EASY",
+  "title": "Non-Boolean Controlling Expression in If Statement",
+  "prompt": "You are a senior embedded software engineer and static-analysis triage specialist.\nAnalyze the following static analysis / MISRA finding report.\n\nSTATIC ANALYSIS WARNING REPORT:\n- Tool: Polyspace Bug Finder\n- Rule ID: MISRA C:2012 Rule 14.4 (Required)\n- Description: The controlling expression of an if statement and the controlling expression of an iteration-statement shall have essentially Boolean type.\n- File: comm_handler.c, Line 118\n- Code Context:\n  uint8_t rx_status_flags = get_uart_flags();\n  /* Line 118: */\n  if (rx_status_flags & 0x04U)\n  {\n      handle_buffer_overflow();\n  }\n\n\n## INSTRUCTIONS & CONSTRAINTS:\n1. Explain what the finding means and the exact code construct causing it.\n2. Evaluate potential risks and remediation options.\n3. Distinguish between FACT FROM PROVIDED INPUT, MODEL REASONING, and ASSUMPTIONS.\n4. Do NOT blindly declare a finding to be a false positive without proof.\n5. If the supplied code or context is missing or insufficient to make a determination, explicitly state: 'Insufficient information to determine.' Do NOT fabricate rules, project deviation approvals, or company coding standards.\n6. Use EXACTLY this structure:\n\nFINDING: [Summary of the diagnostic report]\nRULE: [Rule ID and rule requirement statement]\nCODE CONTEXT: [The specific line and construct triggering the violation]\nANALYSIS: [Technical explanation of the violation and mechanism]\nRISK: [Potential safety, reliability, or undefined behavior risk]\nRECOMMENDED ACTION: [Specific compliant code refactoring or action]\nTEST IMPACT: [Specific unit/regression tests needed to verify remediation]\nCONFIDENCE: [High | Medium | Low | Insufficient Information to Determine]\nASSUMPTIONS: [Explicitly state any assumptions made, or 'None']\n",
+  "rendered_prompt": "<|im_start|>user\nYou are a senior embedded software engineer and static-analysis triage specialist.\nAnalyze the following static analysis / MISRA finding report.\n\nSTATIC ANALYSIS WARNING REPORT:\n- Tool: Polyspace Bug Finder\n- Rule ID: MISRA C:2012 Rule 14.4 (Required)\n- Description: The controlling expression of an if statement and the controlling expression of an iteration-statement shall have essentially Boolean type.\n- File: comm_handler.c, Line 118\n- Code Context:\n  uint8_t rx_status_flags = get_uart_flags();\n  /* Line 118: */\n  if (rx_status_flags & 0x04U)\n  {\n      handle_buffer_overflow();\n  }\n\n\n## INSTRUCTIONS & CONSTRAINTS:\n1. Explain what the finding means and the exact code construct causing it.\n2. Evaluate potential risks and remediation options.\n3. Distinguish between FACT FROM PROVIDED INPUT, MODEL REASONING, and ASSUMPTIONS.\n4. Do NOT blindly declare a finding to be a false positive without proof.\n5. If the supplied code or context is missing or insufficient to make a determination, explicitly state: 'Insufficient information to determine.' Do NOT fabricate rules, project deviation approvals, or company coding standards.\n6. Use EXACTLY this structure:\n\nFINDING: [Summary of the diagnostic report]\nRULE: [Rule ID and rule requirement statement]\nCODE CONTEXT: [The specific line and construct triggering the violation]\nANALYSIS: [Technical explanation of the violation and mechanism]\nRISK: [Potential safety, reliability, or undefined behavior risk]\nRECOMMENDED ACTION: [Specific compliant code refactoring or action]\nTEST IMPACT: [Specific unit/regression tests needed to verify remediation]\nCONFIDENCE: [High | Medium | Low | Insufficient Information to Determine]\nASSUMPTIONS: [Explicitly state any assumptions made, or 'None']\n<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+  "raw_output": "FINDING: The condition in an `if` statement is not explicitly Boolean, violating MISRA C:2012 Rule 14.4.\nRULE: MISRA C:2012 Rule 14.4 requires that the controlling expression of an `if` statement and the controlling expression of an iteration-statement shall have essentially Boolean type.\nCODE CONTEXT: Line 118: `if (rx_status_flags & 0x04U)`\nANALYSIS: The condition in the `if` statement is a bitwise AND operation between a `uint8_t` variable (`rx_status_flags`) and a constant (`0x04U`). This results in an integer value, not a Boolean type. MISRA C:2012 Rule 14.4 mandates that such conditions must evaluate to a Boolean type (i.e., `true` or `false`), not an integer. This is a violation of the rule.\nRISK: The condition may evaluate to a non-zero integer (e.g., 4) which is treated as `true` in C, but the intent may be to check for a specific bit being set. This could lead to unintended behavior, especially if the result of the bitwise operation is not properly interpreted as a Boolean. It also reduces code clarity and may lead to misinterpretation of the logic.\nRECOMMENDED ACTION: Refactor the condition to explicitly check if the bit is set, using a Boolean expression. For example, cast the result of the bitwise operation to a Boolean type or use a macro to make the intent clear.\nTEST IMPACT: Unit tests should verify that the condition behaves as expected when the bit is set and when it is not. Regression tests should ensure that the change does not affect other parts of the code.\nCONFIDENCE: High\nASSUMPTIONS: None",
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20,
+  "max_new_tokens": 900,
+  "generation_time": 17.2,
+  "tokens_generated": 381,
+  "tokens_per_sec": 22.15,
+  "status": "ok",
+  "error": null,
+  "expected_focus": "Controlling expression type, bitwise operation producing integer rather than boolean type.",
+  "evaluation_points": [
+    "Explains that (rx_status_flags & 0x04U) yields an essentially unsigned integer type, not an essentially Boolean type.",
+    "Assesses risk: relatively low functional risk in this specific snippet, but violates strict safety-critical clarity guidelines.",
+    "Provides clean remediation: explicit comparison against zero: `if ((rx_status_flags & 0x04U) != 0U)` or using boolean helper.",
+    "Identifies that finding is technically valid according to MISRA C:2012 rule.",
+    "Suggests unit test verifying overflow handler triggers when bit 2 is set and does not when clear."
+  ]
+}

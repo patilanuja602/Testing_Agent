@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-10-08T06:08:05.217089+00:00",
+  "model": "Qwen3-8B",
+  "model_path": "./models/Qwen3-8B",
+  "quantization": "4-bit NF4",
+  "gpu": "NVIDIA GeForce RTX 4060",
+  "mode": "MODE_A_THINKING_OFF",
+  "thinking_mode": false,
+  "capability": "MISRA / Static Analysis",
+  "case_id": "MISRA-03",
+  "difficulty": "MEDIUM",
+  "title": "Discarded Return Value of Hardware Write Function",
+  "prompt": "You are a senior embedded software engineer and static-analysis triage specialist.\nAnalyze the following static analysis / MISRA finding report.\n\nSTATIC ANALYSIS WARNING REPORT:\n- Tool: Coverity\n- Rule ID: MISRA C:2012 Rule 17.7 (Required)\n- Description: The value returned by a function having non-void return type shall be used.\n- File: flash_driver.c, Line 87\n- Code Context:\n  /* flash_status_t spi_flash_write_sector(uint32_t addr, const uint8_t *buf, size_t len); */\n  /* Line 87: */\n  spi_flash_write_sector(sector_addr, page_data, 256U);\n  g_write_count++;\n\n\n## INSTRUCTIONS & CONSTRAINTS:\n1. Explain what the finding means and the exact code construct causing it.\n2. Evaluate potential risks and remediation options.\n3. Distinguish between FACT FROM PROVIDED INPUT, MODEL REASONING, and ASSUMPTIONS.\n4. Do NOT blindly declare a finding to be a false positive without proof.\n5. If the supplied code or context is missing or insufficient to make a determination, explicitly state: 'Insufficient information to determine.' Do NOT fabricate rules, project deviation approvals, or company coding standards.\n6. Use EXACTLY this structure:\n\nFINDING: [Summary of the diagnostic report]\nRULE: [Rule ID and rule requirement statement]\nCODE CONTEXT: [The specific line and construct triggering the violation]\nANALYSIS: [Technical explanation of the violation and mechanism]\nRISK: [Potential safety, reliability, or undefined behavior risk]\nRECOMMENDED ACTION: [Specific compliant code refactoring or action]\nTEST IMPACT: [Specific unit/regression tests needed to verify remediation]\nCONFIDENCE: [High | Medium | Low | Insufficient Information to Determine]\nASSUMPTIONS: [Explicitly state any assumptions made, or 'None']\n",
+  "rendered_prompt": "<|im_start|>user\nYou are a senior embedded software engineer and static-analysis triage specialist.\nAnalyze the following static analysis / MISRA finding report.\n\nSTATIC ANALYSIS WARNING REPORT:\n- Tool: Coverity\n- Rule ID: MISRA C:2012 Rule 17.7 (Required)\n- Description: The value returned by a function having non-void return type shall be used.\n- File: flash_driver.c, Line 87\n- Code Context:\n  /* flash_status_t spi_flash_write_sector(uint32_t addr, const uint8_t *buf, size_t len); */\n  /* Line 87: */\n  spi_flash_write_sector(sector_addr, page_data, 256U);\n  g_write_count++;\n\n\n## INSTRUCTIONS & CONSTRAINTS:\n1. Explain what the finding means and the exact code construct causing it.\n2. Evaluate potential risks and remediation options.\n3. Distinguish between FACT FROM PROVIDED INPUT, MODEL REASONING, and ASSUMPTIONS.\n4. Do NOT blindly declare a finding to be a false positive without proof.\n5. If the supplied code or context is missing or insufficient to make a determination, explicitly state: 'Insufficient information to determine.' Do NOT fabricate rules, project deviation approvals, or company coding standards.\n6. Use EXACTLY this structure:\n\nFINDING: [Summary of the diagnostic report]\nRULE: [Rule ID and rule requirement statement]\nCODE CONTEXT: [The specific line and construct triggering the violation]\nANALYSIS: [Technical explanation of the violation and mechanism]\nRISK: [Potential safety, reliability, or undefined behavior risk]\nRECOMMENDED ACTION: [Specific compliant code refactoring or action]\nTEST IMPACT: [Specific unit/regression tests needed to verify remediation]\nCONFIDENCE: [High | Medium | Low | Insufficient Information to Determine]\nASSUMPTIONS: [Explicitly state any assumptions made, or 'None']\n<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+  "raw_output": "FINDING: The function `spi_flash_write_sector` returns a value that is not used, violating MISRA C:2012 Rule 17.7.  \nRULE: MISRA C:2012 Rule 17.7: The value returned by a function having non-void return type shall be used.  \nCODE CONTEXT: Line 87: `spi_flash_write_sector(sector_addr, page_data, 256U);` followed by `g_write_count++`.  \n\nANALYSIS: The function `spi_flash_write_sector` is declared to return a value of type `flash_status_t` (non-void). However, the code does not capture or use the return value of this function. MISRA C:2012 Rule 17.7 explicitly requires that the return value of any non-void function must be used. This violation indicates that the return value is being ignored, which may lead to potential errors or undefined behavior if the function's return value is intended to indicate success or failure.  \n\nRISK: The function's return value may contain critical information (e.g., success/failure status) that is not being checked. Ignoring this could lead to incorrect assumptions about the operation's outcome, potentially causing data corruption, system instability, or failure to handle errors properly.  \n\nRECOMMENDED ACTION: Capture and use the return value of `spi_flash_write_sector`. For example:  \n```c\nflash_status_t status = spi_flash_write_sector(sector_addr, page_data, 256U);\nif (status != FLASH_STATUS_OK) {\n    // Handle error\n}\ng_write_count++;\n```  \n\nTEST IMPACT: Unit tests should verify that the return value is checked and that error conditions are handled appropriately. Regression tests should ensure that ignoring the return value does not lead to incorrect behavior.  \n\nCONFIDENCE: High  \nASSUMPTIONS: None. The code context and rule are sufficient to determine the violation and its risk.",
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20,
+  "max_new_tokens": 900,
+  "generation_time": 18.5,
+  "tokens_generated": 411,
+  "tokens_per_sec": 22.22,
+  "status": "ok",
+  "error": null,
+  "expected_focus": "Unchecked function return value, silent hardware write failures, data corruption risk.",
+  "evaluation_points": [
+    "Explains that spi_flash_write_sector returns flash_status_t which is completely ignored.",
+    "Identifies severe risk: write failure (e.g. write protected, busy, hardware fault) goes undetected while write counter increments.",
+    "Provides remediation: evaluate return code, handle errors (retry or escalate), and update count only on success.",
+    "Identifies that if return value was intentionally ignored (not recommended here), explicit `(void)` cast is required by MISRA, but proper error handling is preferred.",
+    "Specifies test impact: negative tests simulating write failure return code."
+  ]
+}
