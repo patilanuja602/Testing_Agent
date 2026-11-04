@@ -1,0 +1,713 @@
+{
+ "_comment": "Produced by the ORIGINAL upstream package (not by the bundled copy) via scripts/compare_with_upstream.py --write-golden.",
+ "files": {
+  "sample_projects/embedded_demo/src/filter.cpp": {
+   "functions": [
+    {
+     "cyclomatic_complexity": 1,
+     "end_line": 6,
+     "length": 1,
+     "long_name": "MovingAverage::MovingAverage( int window)",
+     "name": "MovingAverage::MovingAverage",
+     "nloc": 1,
+     "parameter_count": 1,
+     "parameters": [
+      "window"
+     ],
+     "start_line": 6,
+     "token_count": 18,
+     "top_nesting_level": 1
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 18,
+     "length": 11,
+     "long_name": "MovingAverage::push( double value)",
+     "name": "MovingAverage::push",
+     "nloc": 11,
+     "parameter_count": 1,
+     "parameters": [
+      "value"
+     ],
+     "start_line": 8,
+     "token_count": 70,
+     "top_nesting_level": 1
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 29,
+     "length": 5,
+     "long_name": "clamp( int v , int lo , int hi)",
+     "name": "clamp",
+     "nloc": 5,
+     "parameter_count": 3,
+     "parameters": [
+      "v",
+      "lo",
+      "hi"
+     ],
+     "start_line": 25,
+     "token_count": 34,
+     "top_nesting_level": 0
+    }
+   ],
+   "nloc": 24,
+   "token_count": 147
+  },
+  "sample_projects/embedded_demo/src/uart_driver.c": {
+   "functions": [
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 15,
+     "length": 6,
+     "long_name": "uart_init( uint32_t baud)",
+     "name": "uart_init",
+     "nloc": 6,
+     "parameter_count": 1,
+     "parameters": [
+      "baud"
+     ],
+     "start_line": 10,
+     "token_count": 22,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 8,
+     "end_line": 30,
+     "length": 14,
+     "long_name": "uart_send( const uint8_t * data , uint8_t len , uint8_t busy)",
+     "name": "uart_send",
+     "nloc": 14,
+     "parameter_count": 3,
+     "parameters": [
+      "data",
+      "len",
+      "busy"
+     ],
+     "start_line": 17,
+     "token_count": 87,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 10,
+     "end_line": 54,
+     "length": 23,
+     "long_name": "uart_parse_frame( const uint8_t * frame , uint8_t len)",
+     "name": "uart_parse_frame",
+     "nloc": 23,
+     "parameter_count": 2,
+     "parameters": [
+      "frame",
+      "len"
+     ],
+     "start_line": 32,
+     "token_count": 153,
+     "top_nesting_level": 0
+    }
+   ],
+   "nloc": 46,
+   "token_count": 278
+  },
+  "tests/fixtures/c/constructs.c": {
+   "functions": [
+    {
+     "cyclomatic_complexity": 1,
+     "end_line": 8,
+     "length": 3,
+     "long_name": "simple_add( int a , int b)",
+     "name": "simple_add",
+     "nloc": 3,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 6,
+     "token_count": 15,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 16,
+     "length": 7,
+     "long_name": "if_else( int x)",
+     "name": "if_else",
+     "nloc": 7,
+     "parameter_count": 1,
+     "parameters": [
+      "x"
+     ],
+     "start_line": 10,
+     "token_count": 25,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 25,
+     "length": 8,
+     "long_name": "nested_if( int a , int b)",
+     "name": "nested_if",
+     "nloc": 8,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 18,
+     "token_count": 32,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 5,
+     "end_line": 39,
+     "length": 13,
+     "long_name": "else_if_chain( int x)",
+     "name": "else_if_chain",
+     "nloc": 13,
+     "parameter_count": 1,
+     "parameters": [
+      "x"
+     ],
+     "start_line": 27,
+     "token_count": 61,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 47,
+     "length": 7,
+     "long_name": "for_loop( int n)",
+     "name": "for_loop",
+     "nloc": 7,
+     "parameter_count": 1,
+     "parameters": [
+      "n"
+     ],
+     "start_line": 41,
+     "token_count": 35,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 54,
+     "length": 6,
+     "long_name": "while_loop( int n)",
+     "name": "while_loop",
+     "nloc": 6,
+     "parameter_count": 1,
+     "parameters": [
+      "n"
+     ],
+     "start_line": 49,
+     "token_count": 21,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 61,
+     "length": 6,
+     "long_name": "do_while_loop( int n)",
+     "name": "do_while_loop",
+     "nloc": 6,
+     "parameter_count": 1,
+     "parameters": [
+      "n"
+     ],
+     "start_line": 56,
+     "token_count": 23,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 4,
+     "end_line": 74,
+     "length": 12,
+     "long_name": "switch_stmt( int c)",
+     "name": "switch_stmt",
+     "nloc": 12,
+     "parameter_count": 1,
+     "parameters": [
+      "c"
+     ],
+     "start_line": 63,
+     "token_count": 36,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 4,
+     "end_line": 81,
+     "length": 6,
+     "long_name": "logical_ops( int a , int b , int c)",
+     "name": "logical_ops",
+     "nloc": 6,
+     "parameter_count": 3,
+     "parameters": [
+      "a",
+      "b",
+      "c"
+     ],
+     "start_line": 76,
+     "token_count": 29,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 4,
+     "end_line": 93,
+     "length": 11,
+     "long_name": "nested_loops( int n , int m)",
+     "name": "nested_loops",
+     "nloc": 11,
+     "parameter_count": 2,
+     "parameters": [
+      "n",
+      "m"
+     ],
+     "start_line": 83,
+     "token_count": 67,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 97,
+     "length": 3,
+     "long_name": "ternary_max( int a , int b)",
+     "name": "ternary_max",
+     "nloc": 3,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 95,
+     "token_count": 19,
+     "top_nesting_level": 0
+    }
+   ],
+   "nloc": 83,
+   "token_count": 376
+  },
+  "tests/fixtures/c/macros_ifdef.c": {
+   "functions": [
+    {
+     "cyclomatic_complexity": 1,
+     "end_line": 8,
+     "length": 3,
+     "long_name": "uses_macro( int a , int b)",
+     "name": "uses_macro",
+     "nloc": 3,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 6,
+     "token_count": 23,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 4,
+     "end_line": 21,
+     "length": 12,
+     "long_name": "with_ifdef( int x)",
+     "name": "with_ifdef",
+     "nloc": 9,
+     "parameter_count": 1,
+     "parameters": [
+      "x"
+     ],
+     "start_line": 10,
+     "token_count": 33,
+     "top_nesting_level": 0
+    }
+   ],
+   "nloc": 12,
+   "token_count": 58
+  },
+  "tests/fixtures/cpp/classes.cpp": {
+   "functions": [
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 11,
+     "length": 5,
+     "long_name": "Calculator::Calculator( int base)",
+     "name": "Calculator::Calculator",
+     "nloc": 5,
+     "parameter_count": 1,
+     "parameters": [
+      "base"
+     ],
+     "start_line": 7,
+     "token_count": 24,
+     "top_nesting_level": 1
+    },
+    {
+     "cyclomatic_complexity": 1,
+     "end_line": 15,
+     "length": 3,
+     "long_name": "Calculator::add( int a , int b)",
+     "name": "Calculator::add",
+     "nloc": 3,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 13,
+     "token_count": 17,
+     "top_nesting_level": 1
+    },
+    {
+     "cyclomatic_complexity": 1,
+     "end_line": 19,
+     "length": 3,
+     "long_name": "Calculator::add( double a , double b)",
+     "name": "Calculator::add",
+     "nloc": 3,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 17,
+     "token_count": 15,
+     "top_nesting_level": 1
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 26,
+     "length": 6,
+     "long_name": "Calculator::add( int a , int b , int c)",
+     "name": "Calculator::add",
+     "nloc": 6,
+     "parameter_count": 3,
+     "parameters": [
+      "a",
+      "b",
+      "c"
+     ],
+     "start_line": 21,
+     "token_count": 33,
+     "top_nesting_level": 1
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 36,
+     "length": 9,
+     "long_name": "Calculator::classify( int x)",
+     "name": "Calculator::classify",
+     "nloc": 9,
+     "parameter_count": 1,
+     "parameters": [
+      "x"
+     ],
+     "start_line": 28,
+     "token_count": 32,
+     "top_nesting_level": 1
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 52,
+     "length": 9,
+     "long_name": "Calculator::scale( int x)",
+     "name": "Calculator::scale",
+     "nloc": 9,
+     "parameter_count": 1,
+     "parameters": [
+      "x"
+     ],
+     "start_line": 44,
+     "token_count": 47,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 62,
+     "length": 9,
+     "long_name": "day_type( int d)",
+     "name": "day_type",
+     "nloc": 9,
+     "parameter_count": 1,
+     "parameters": [
+      "d"
+     ],
+     "start_line": 54,
+     "token_count": 27,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 72,
+     "length": 9,
+     "long_name": "sum_positive( const std :: vector<int> & values)",
+     "name": "sum_positive",
+     "nloc": 9,
+     "parameter_count": 1,
+     "parameters": [
+      "std"
+     ],
+     "start_line": 64,
+     "token_count": 43,
+     "top_nesting_level": 0
+    }
+   ],
+   "nloc": 60,
+   "token_count": 266
+  },
+  "tests/fixtures/cpp/templates_lambdas.cpp": {
+   "functions": [
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 11,
+     "length": 6,
+     "long_name": "max_of( T a , T b)",
+     "name": "max_of",
+     "nloc": 6,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 6,
+     "token_count": 24,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 22,
+     "length": 10,
+     "long_name": "count_positive( const std :: vector<int> & v)",
+     "name": "count_positive",
+     "nloc": 10,
+     "parameter_count": 1,
+     "parameters": [
+      "std"
+     ],
+     "start_line": 13,
+     "token_count": 60,
+     "top_nesting_level": 0
+    }
+   ],
+   "nloc": 18,
+   "token_count": 93
+  },
+  "tests/fixtures/python/constructs.py": {
+   "functions": [
+    {
+     "cyclomatic_complexity": 1,
+     "end_line": 7,
+     "length": 2,
+     "long_name": "simple( a , b )",
+     "name": "simple",
+     "nloc": 2,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 6,
+     "token_count": 11,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 14,
+     "length": 5,
+     "long_name": "if_else( x )",
+     "name": "if_else",
+     "nloc": 5,
+     "parameter_count": 1,
+     "parameters": [
+      "x"
+     ],
+     "start_line": 10,
+     "token_count": 17,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 21,
+     "length": 5,
+     "long_name": "nested_if( a , b )",
+     "name": "nested_if",
+     "nloc": 5,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 17,
+     "token_count": 21,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 4,
+     "end_line": 32,
+     "length": 9,
+     "long_name": "elif_chain( x )",
+     "name": "elif_chain",
+     "nloc": 9,
+     "parameter_count": 1,
+     "parameters": [
+      "x"
+     ],
+     "start_line": 24,
+     "token_count": 31,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 39,
+     "length": 5,
+     "long_name": "for_loop( items )",
+     "name": "for_loop",
+     "nloc": 5,
+     "parameter_count": 1,
+     "parameters": [
+      "items"
+     ],
+     "start_line": 35,
+     "token_count": 18,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 45,
+     "length": 4,
+     "long_name": "while_loop( n )",
+     "name": "while_loop",
+     "nloc": 4,
+     "parameter_count": 1,
+     "parameters": [
+      "n"
+     ],
+     "start_line": 42,
+     "token_count": 15,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 4,
+     "end_line": 51,
+     "length": 4,
+     "long_name": "boolean_expr( a , b , c )",
+     "name": "boolean_expr",
+     "nloc": 4,
+     "parameter_count": 3,
+     "parameters": [
+      "a",
+      "b",
+      "c"
+     ],
+     "start_line": 48,
+     "token_count": 20,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 4,
+     "end_line": 60,
+     "length": 7,
+     "long_name": "nested_loops( n , m )",
+     "name": "nested_loops",
+     "nloc": 7,
+     "parameter_count": 2,
+     "parameters": [
+      "n",
+      "m"
+     ],
+     "start_line": 54,
+     "token_count": 42,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 69,
+     "length": 7,
+     "long_name": "safe_div( a , b )",
+     "name": "safe_div",
+     "nloc": 7,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 63,
+     "token_count": 23,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 2,
+     "end_line": 73,
+     "length": 2,
+     "long_name": "conditional_expr( a , b )",
+     "name": "conditional_expr",
+     "nloc": 2,
+     "parameter_count": 2,
+     "parameters": [
+      "a",
+      "b"
+     ],
+     "start_line": 72,
+     "token_count": 15,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 82,
+     "length": 7,
+     "long_name": "try_finally( a )",
+     "name": "try_finally",
+     "nloc": 7,
+     "parameter_count": 1,
+     "parameters": [
+      "a"
+     ],
+     "start_line": 76,
+     "token_count": 22,
+     "top_nesting_level": 0
+    },
+    {
+     "cyclomatic_complexity": 3,
+     "end_line": 86,
+     "length": 2,
+     "long_name": "comprehension( xs )",
+     "name": "comprehension",
+     "nloc": 2,
+     "parameter_count": 1,
+     "parameters": [
+      "xs"
+     ],
+     "start_line": 85,
+     "token_count": 17,
+     "top_nesting_level": 0
+    }
+   ],
+   "nloc": 59,
+   "token_count": 265
+  },
+  "tests/fixtures/python/match_statement.py": {
+   "functions": [
+    {
+     "cyclomatic_complexity": 4,
+     "end_line": 12,
+     "length": 8,
+     "long_name": "http_status( code )",
+     "name": "http_status",
+     "nloc": 8,
+     "parameter_count": 1,
+     "parameters": [
+      "code"
+     ],
+     "start_line": 5,
+     "token_count": 23,
+     "top_nesting_level": 0
+    }
+   ],
+   "nloc": 8,
+   "token_count": 25
+  },
+  "tests/fixtures/python/syntax_error.py": {
+   "functions": [],
+   "nloc": 2,
+   "token_count": 6
+  }
+ },
+ "upstream_version": "1.24.3"
+}

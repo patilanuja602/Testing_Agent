@@ -1,0 +1,13 @@
+[server]
+address = "127.0.0.1"      # localhost only
+headless = false
+maxUploadSize = 200        # MB (Streamlit-level cap)
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false   # no telemetry
+
+[theme]
+# One consistent dark theme regardless of the operating-system preference; a single accent colour.
+base = "dark"
+primaryColor = "#4F8CFF"

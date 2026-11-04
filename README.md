@@ -16,7 +16,14 @@ This system provides automated derivation, evaluation, and benchmark analysis ac
 Testing_Agent/
 ├── .gitignore                      # Git ignore rules (excludes .venv, model weights, caches)
 ├── README.md                       # Main project overview & instructions
-└── qwen_test_generator/            # Application core package
+├── unit_testing_platform/          # Phase 1: Cyclomatic Complexity Analysis Platform
+│   ├── app.py                      # Interactive Streamlit Web UI for Phase 1
+│   ├── requirements.txt            # Streamlit, pandas, openpyxl, pytest
+│   ├── core/                       # Complexity engine adapter & orchestration
+│   ├── third_party/lizard/         # Bundled analysis core (local, stdlib only)
+│   ├── tests/                      # 142 automated tests + sample code files
+│   └── ui/                         # Streamlit UI dashboards
+└── qwen_test_generator/            # Qwen3-8B AI Test Generation System
     ├── app.py                      # Interactive Streamlit Web UI
     ├── requirements.txt            # Python dependencies
     ├── smoke_test.py               # Quick validation & hardware sanity test

@@ -1,0 +1,117 @@
+{
+  "_comment": "Integrity manifest for third_party/lizard. 'unmodified' files must be byte-identical to upstream. 'modified'/'new' files are pinned to their reviewed hash; change them only together with MODIFICATIONS.md (then run: python scripts/update_vendor_manifest.py).",
+  "upstream": {
+    "name": "lizard",
+    "version": "1.24.3",
+    "repository": "https://github.com/terryyin/lizard",
+    "pypi": "https://pypi.org/project/lizard/1.24.3/",
+    "sdist_file": "lizard-1.24.3.tar.gz",
+    "sdist_sha256": "7d2570ca711288388de1cf0f25512e97fbbc5e189f551c87b4e20d11d028b297",
+    "wheel_file": "lizard-1.24.3-py2.py3-none-any.whl",
+    "wheel_sha256": "f7fccd909719170e323a240cc6927bfea65984d77a8f9c0e6405be582e9861db"
+  },
+  "files": {
+    "__init__.py": {
+      "status": "new",
+      "upstream_path": null,
+      "upstream_sha256": null,
+      "sha256": "de5fba88b7b81a540efeadea18c1bf4e6fe4c1ec2dfddc0229f9d8a96a07b418"
+    },
+    "lizard_core/__init__.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_core/__init__.py",
+      "upstream_sha256": "345df9bf6abd477b82b7546d212473cf78aa1a15450be0f75ba32603206d066c",
+      "sha256": "345df9bf6abd477b82b7546d212473cf78aa1a15450be0f75ba32603206d066c"
+    },
+    "lizard_core/file_analyzer.py": {
+      "status": "modified",
+      "upstream_path": "lizard_core/file_analyzer.py",
+      "upstream_sha256": "487157f9c9d7fe6737ead1f96aaaa99aaee7afb7701804b2d1fec8784b68b75d",
+      "sha256": "af3f9521e3889e5a01570171f65f74608bc967dd3f1a11c5f69ff7fe7c72cec3"
+    },
+    "lizard_core/file_info_builder.py": {
+      "status": "modified",
+      "upstream_path": "lizard_core/file_info_builder.py",
+      "upstream_sha256": "fb1092b7cc5e9d6fb07263bf6cba94f6ef1127f22901a9ae68534c7c63ccfe29",
+      "sha256": "485226e251b022b4fd39c09f888cd9b7aa90c0491178ab135b22ea5c568e0618"
+    },
+    "lizard_core/function_info.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_core/function_info.py",
+      "upstream_sha256": "778a2612c2b41882695ab5f3eed4822bb35c54443ba124f11ad6908f6c0b6a84",
+      "sha256": "778a2612c2b41882695ab5f3eed4822bb35c54443ba124f11ad6908f6c0b6a84"
+    },
+    "lizard_ext/__init__.py": {
+      "status": "modified",
+      "upstream_path": "lizard_ext/__init__.py",
+      "upstream_sha256": "510da86787a3d4209e920898d908fcb06c7c1e17a8632c6370ec6faf017bd247",
+      "sha256": "44e23e1a37e9da3d07c458131a18d1d92bdaba9050ca7716b243e4fe99544b9c"
+    },
+    "lizard_ext/auto_open.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_ext/auto_open.py",
+      "upstream_sha256": "6f20ff45b79586f494851d9b24c462b6f037cdc2846a9170bf4f9768327a185a",
+      "sha256": "6f20ff45b79586f494851d9b24c462b6f037cdc2846a9170bf4f9768327a185a"
+    },
+    "lizard_languages/__init__.py": {
+      "status": "modified",
+      "upstream_path": "lizard_languages/__init__.py",
+      "upstream_sha256": "91b108ac61885267f2bdfb46c7387d6175d0434ce3b7e7826295543ef3f6bbce",
+      "sha256": "686d7d8c0bb7b1faec390d02005d5128b5e68f28e3b3ccc59f64de5c013f2106"
+    },
+    "lizard_languages/clike.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_languages/clike.py",
+      "upstream_sha256": "cfa10de0700f6cc37e9713c8faf634e50d363316523d4c04f8965b5bab9caa39",
+      "sha256": "cfa10de0700f6cc37e9713c8faf634e50d363316523d4c04f8965b5bab9caa39"
+    },
+    "lizard_languages/clike_states.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_languages/clike_states.py",
+      "upstream_sha256": "5e3c8e496bccc0c7724caf258351df15e21c4690b9255c549ef6342f7a118e79",
+      "sha256": "5e3c8e496bccc0c7724caf258351df15e21c4690b9255c549ef6342f7a118e79"
+    },
+    "lizard_languages/code_reader.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_languages/code_reader.py",
+      "upstream_sha256": "eb900aa64840bfa5c3c30376a95b6f95d856647d8da58a155223b3557c0ea49f",
+      "sha256": "eb900aa64840bfa5c3c30376a95b6f95d856647d8da58a155223b3557c0ea49f"
+    },
+    "lizard_languages/python.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_languages/python.py",
+      "upstream_sha256": "6a41ab500517ba7d130b34d3cc6ed2808627621a48c333a26d7e81c0a3addaaf",
+      "sha256": "6a41ab500517ba7d130b34d3cc6ed2808627621a48c333a26d7e81c0a3addaaf"
+    },
+    "lizard_languages/python_structure.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_languages/python_structure.py",
+      "upstream_sha256": "8c162a1dbe1b4726a3bf4b2b7f26cc0b85759eec8fd3f55b4bc78e743c5eba74",
+      "sha256": "8c162a1dbe1b4726a3bf4b2b7f26cc0b85759eec8fd3f55b4bc78e743c5eba74"
+    },
+    "lizard_languages/python_tokens.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_languages/python_tokens.py",
+      "upstream_sha256": "d55d239b659d2c0315debd7dc675c5f24d9fc848cf097664da4f62ae76dea41e",
+      "sha256": "d55d239b659d2c0315debd7dc675c5f24d9fc848cf097664da4f62ae76dea41e"
+    },
+    "lizard_languages/script_language.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_languages/script_language.py",
+      "upstream_sha256": "1a06d3d12a9bb308b2379b8a96da6b01f288a543f3caeb780d62356825fd27ef",
+      "sha256": "1a06d3d12a9bb308b2379b8a96da6b01f288a543f3caeb780d62356825fd27ef"
+    },
+    "lizard_languages/token_pattern.py": {
+      "status": "unmodified",
+      "upstream_path": "lizard_languages/token_pattern.py",
+      "upstream_sha256": "43ea90af99d7ac1002e77d0e39c118f3fc3741baecdb38193eaa06bf22d19dc2",
+      "sha256": "43ea90af99d7ac1002e77d0e39c118f3fc3741baecdb38193eaa06bf22d19dc2"
+    },
+    "LICENSE.txt": {
+      "status": "unmodified",
+      "upstream_path": "LICENSE.txt",
+      "upstream_sha256": "d39663810f02975743f69d01856f93c7391ce6b842a20189544b9fd464f663f3",
+      "sha256": "d39663810f02975743f69d01856f93c7391ce6b842a20189544b9fd464f663f3"
+    }
+  }
+}
