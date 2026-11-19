@@ -24,6 +24,7 @@ from typing import BinaryIO, List, Optional, Sequence, Union
 from config import WORKSPACE_PREFIX, Limits
 from core.language_detector import check_source_file, detect_language, unsupported_reason
 from models.analysis_result import SkippedFile, StagedFile
+from services.header_resolver import resolve_headers
 
 IGNORED_DIRECTORIES = {".git", ".svn", ".hg", "__pycache__", "node_modules", "venv", ".venv", ".idea", ".vscode"}
 _CHUNK = 64 * 1024
@@ -123,6 +124,7 @@ def stage_uploads(items: Sequence[UploadedItem], limits: Limits) -> StagedProjec
             _stage_zip(project, item, index, label, multiple, names, limits, extracted_total)
         else:
             _stage_single(project, item, index, label, names, limits)
+    resolve_headers(project.files)      # needs every file of the project: decides the language of .h files
     return project
 
 

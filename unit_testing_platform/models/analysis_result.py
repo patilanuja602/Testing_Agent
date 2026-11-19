@@ -74,6 +74,26 @@ class StagedFile:
     language: Language
     size: int
     warnings: List[str] = field(default_factory=list)
+    # Ambiguous headers (.h): True when the project gives no reliable evidence whether the header
+    # is C or C++. Such a header is then analysed in the language the user selected (see below).
+    header_ambiguous: bool = False
+    language_basis: str = ""             # how ``language`` was decided (shown to the user)
+
+    def effective_language(self, selected) -> Language:
+        """Language the file is analysed (and reported) as under the user's language selection.
+        Only an ambiguous header depends on the selection: C++ when C++ alone is selected,
+        otherwise C."""
+        if not self.header_ambiguous:
+            return self.language
+        return Language.CPP if set(selected) == {Language.CPP} else Language.C
+
+    def is_selectable(self, selected) -> bool:
+        """Is the file offered for analysis under the user's language selection? An ambiguous
+        header is offered whenever C or C++ is selected; any other file only for its language."""
+        selected = set(selected)
+        if self.header_ambiguous:
+            return bool(selected & {Language.C, Language.CPP})
+        return self.language in selected
 
 
 @dataclass

@@ -2,7 +2,7 @@
 
 Upstream licence terms ask that modified files are marked as such. Every modified file below
 starts with a `NOTE (Unit Testing Platform): this file was MODIFIED ...` comment.
-**No counting or parsing logic was changed.** Compare against upstream with
+**No counting or parsing logic was changed in these files.** (The application's own counting corrections live outside this directory, in `core/complexity/reader.py`, as a subclass of the upstream reader; see `THIRD_PARTY_NOTICES.md`.) Compare against upstream with
 `scripts/compare_with_upstream.py`.
 
 ## Files copied byte-for-byte (12)

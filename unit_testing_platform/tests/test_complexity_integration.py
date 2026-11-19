@@ -118,19 +118,56 @@ def test_bundled_core_reproduces_original_upstream_results_exactly():
     assert total >= 40
 
 
+# The application deliberately differs from upstream Lizard 1.24.3 in exactly these documented places
+# (core/complexity/reader.py). Anything else that differs is a regression.
+DOCUMENTED_DIVERGENCES = {
+    # (file, function): (upstream CCN, application CCN, reason)
+    ("tests/fixtures/c/macros_ifdef.c", "with_ifdef"): (4, 3, "#ifdef is compile-time, not a decision"),
+    ("sample_projects/embedded_demo/src/filter.cpp", "MovingAverage::MovingAverage"):
+        (1, 2, "the '?' in the member-initialiser list is executed by the constructor; upstream drops it"),
+}
+DOCUMENTED_TOKEN_DIVERGENCES = {   # tokens of a lambda body belong to the lambda entry, not the enclosing function
+    ("tests/fixtures/cpp/templates_lambdas.cpp", "count_positive"): (60, 54),
+}
+DOCUMENTED_EXTRA_FUNCTIONS = {   # lambda bodies are reported as their own entries
+    ("tests/fixtures/cpp/templates_lambdas.cpp", "count_positive::(lambda at line 15)"),
+}
+
+
 def test_adapter_output_agrees_with_golden_ccn_for_every_function():
-    """Same check one level up: what the application actually reports."""
+    """Same check one level up: what the application actually reports. Differences from the
+    upstream golden file must be exactly the documented, reasoned divergences."""
     engine = ComplexityEngine()
     checked = 0
+    seen_div, seen_extra = set(), set()
     for rel, expected in _golden()["files"].items():
         if detect_language(rel) is None:          # e.g. the Python fixtures: bundled core only, not offered by the app
             continue
         checked += 1
         _, funcs = engine.analyze_file(ROOT / rel, rel, detect_language(rel))
-        assert [(f.function, f.start_line, f.end_line, f.ccn, f.nloc, f.token_count, f.parameters) for f in funcs] == \
-               [(e["name"], e["start_line"], e["end_line"], e["cyclomatic_complexity"], e["nloc"],
-                 e["token_count"], e["parameter_count"]) for e in expected["functions"]], rel
+        got = []
+        for f in funcs:
+            if (rel, f.function) in DOCUMENTED_EXTRA_FUNCTIONS:
+                seen_extra.add((rel, f.function))
+                continue
+            got.append((f.function, f.start_line, f.end_line, f.ccn, f.nloc, f.token_count, f.parameters))
+        want = []
+        for e in expected["functions"]:
+            row = (e["name"], e["start_line"], e["end_line"], e["cyclomatic_complexity"], e["nloc"],
+                   e["token_count"], e["parameter_count"])
+            div = DOCUMENTED_DIVERGENCES.get((rel, e["name"]))
+            if div:
+                assert row[3] == div[0], f"golden value changed for {rel}:{e['name']}"
+                row = row[:3] + (div[1],) + row[4:]
+                seen_div.add((rel, e["name"]))
+            tok = DOCUMENTED_TOKEN_DIVERGENCES.get((rel, e["name"]))
+            if tok:
+                assert row[5] == tok[0], f"golden token count changed for {rel}:{e['name']}"
+                row = row[:5] + (tok[1],) + row[6:]
+            want.append(row)
+        assert got == want, rel
     assert checked >= 6
+    assert seen_div == set(DOCUMENTED_DIVERGENCES) and seen_extra == DOCUMENTED_EXTRA_FUNCTIONS
 
 
 # ------------------------------------------------------------------ licence / provenance guards

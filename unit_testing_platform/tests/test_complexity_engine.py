@@ -100,7 +100,7 @@ def real_engine():
 
 def test_engine_identity_and_core_version(real_engine):
     assert real_engine.name == ENGINE_NAME
-    assert real_engine.version == "1.0.0 (core 1.24.3)"
+    assert real_engine.version == "1.1.0 (core 1.24.3)"
 
 
 def _expected_cases():

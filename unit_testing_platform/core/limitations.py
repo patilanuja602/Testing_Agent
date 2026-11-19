@@ -16,14 +16,15 @@ from models.analysis_result import Language
 _PP_CONDITIONAL = re.compile(r"^\s*#\s*(if|ifdef|ifndef|elif)\b")
 _PP_FUNC_MACRO = re.compile(r"^\s*#\s*define\s+\w+\(")
 _TEMPLATE = re.compile(r"\btemplate\s*<")
-_LAMBDA = re.compile(r"\[[^\[\]]*\]\s*\([^()]*\)\s*(?:mutable\s*)?(?:->\s*[\w:<>&*\s]+?)?\s*\{")
 
-MSG_CONDITIONAL = ("Conditional compilation (#if/#ifdef) is not preprocessed; all branches "
-                   "are analysed together, which can change the result")
+MSG_CONDITIONAL = ("Conditional compilation (#if/#ifdef) is not preprocessed: all branches are analysed "
+                   "together (union of all configurations) and the directives themselves are not counted, "
+                   "so the value can exceed the complexity of any single build configuration")
+MSG_PP_SPLIT = ("Conditional compilation splits code blocks: braces are not balanced inside a branch of "
+                "#if/#else, so functions around it may be mis-detected or missing from the results")
 MSG_FUNC_MACRO = ("Function-like macros are defined in this file; the analyzer does not expand "
                   "macros, so complexity hidden inside macros is not counted")
 MSG_TEMPLATE = "C++ template near this function: the analyzer's parser may mis-detect or mis-count"
-MSG_LAMBDA = "Lambda expression near this function: it may be folded into the enclosing function"
 MSG_MATCH = "Python match/case: counting depends on the engine's convention; verify manually"
 MSG_NO_FUNCTIONS = ("No functions were detected in a non-empty file (declarations only, "
                     "macros, or a construct the parser could not recognise)")
@@ -65,6 +66,39 @@ def _blank_c_comments_and_strings(text: str) -> str:
     return "".join(out)
 
 
+_PP_DIRECTIVE = re.compile(r"^\s*#\s*(\w+)\s*(.*)$")
+_LITERAL = re.compile(r"^\(?\s*\d+\s*\)?$")
+
+
+def _splits_blocks(cleaned: str) -> bool:
+    """True if some #if..#endif group has a branch whose braces are unbalanced. Groups whose
+    condition is a numeric literal are excluded (the reader resolves those itself)."""
+    stack: list = []          # frames: [literal, branch_deltas, current_delta]
+    continued = False
+    for line in cleaned.splitlines():
+        if continued:                      # body of a multi-line directive (e.g. a #define): not code
+            continued = line.rstrip().endswith("\\")
+            continue
+        m = _PP_DIRECTIVE.match(line)
+        if m:
+            continued = line.rstrip().endswith("\\")
+            name, rest = m.group(1), m.group(2).strip()
+            if name in ("if", "ifdef", "ifndef"):
+                stack.append([name == "if" and bool(_LITERAL.match(rest)), [], 0])
+            elif name in ("else", "elif") and stack:
+                stack[-1][1].append(stack[-1][2])
+                stack[-1][2] = 0
+            elif name == "endif" and stack:
+                literal, branches, current = stack.pop()
+                branches.append(current)
+                if not literal and any(delta != 0 for delta in branches):
+                    return True
+            continue
+        if stack:
+            stack[-1][2] += line.count("{") - line.count("}")
+    return False
+
+
 def scan_source(text: str, language: Language) -> LimitationScan:
     scan = LimitationScan()
     if language is Language.PYTHON:
@@ -86,11 +120,10 @@ def scan_source(text: str, language: Language) -> LimitationScan:
             scan.line_risks.append((lineno, MSG_CONDITIONAL))
         if _PP_FUNC_MACRO.match(line):
             has_func_macro = True
-        if language is Language.CPP:
-            if _TEMPLATE.search(line):
-                scan.line_risks.append((lineno, MSG_TEMPLATE))
-            if _LAMBDA.search(line):
-                scan.line_risks.append((lineno, MSG_LAMBDA))
+        if language is Language.CPP and _TEMPLATE.search(line):
+            scan.line_risks.append((lineno, MSG_TEMPLATE))
     if has_func_macro:
         scan.file_warnings.append(MSG_FUNC_MACRO)
+    if _splits_blocks(cleaned):
+        scan.file_warnings.append(MSG_PP_SPLIT)
     return scan

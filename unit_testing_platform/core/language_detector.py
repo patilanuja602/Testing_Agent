@@ -22,7 +22,7 @@ from models.analysis_result import Language
 
 EXTENSION_MAP = {
     ".c": Language.C,
-    ".h": Language.C,          # ambiguous: see AMBIGUOUS_EXTENSIONS
+    ".h": Language.C,          # DEFAULT only: ambiguous, resolved per project by services/header_resolver.py
     ".cpp": Language.CPP,
     ".cc": Language.CPP,
     ".cxx": Language.CPP,
@@ -85,7 +85,7 @@ def check_source_file(path: Path, language: Language, max_bytes: int) -> FileChe
         if exc.start < len(head) - 4:
             warnings.append("File is not valid UTF-8; characters may be decoded incorrectly")
     if path.suffix.lower() in AMBIGUOUS_EXTENSIONS:
-        warnings.append("Header file (.h): language assumed to be C from the extension")
+        warnings.append("Header file (.h): language is resolved from the project (see Notes)")
 
     if language is Language.PYTHON:
         try:

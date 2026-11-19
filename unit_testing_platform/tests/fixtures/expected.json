@@ -1,53 +1,559 @@
 {
-  "_convention": "Lizard: CCN = 1 + if/else-if + for + while (incl. do-while) + case + catch/except + && + || + ?. Values are hand-derived from that convention and have NOT yet been run against Lizard 1.24.3 in the authoring environment. strict=false entries are convention- or parser-sensitive: only detection is asserted.",
+  "_convention": "Lizard: CCN = 1 + if/else-if + for + while (incl. do-while) + case + catch/except + && (logical AND only; reference declarators excluded) + || + ?. Preprocessor directives are not decisions. Lambda bodies are separate functions. Values are hand-derived from that convention and have NOT yet been run against Lizard 1.24.3 in the authoring environment. strict=false entries are convention- or parser-sensitive: only detection is asserted.",
   "files": [
-    {"file": "c/constructs.c", "language": "C", "functions": [
-      {"id": "simple_add", "name": "simple_add", "ccn": 1, "strict": true, "params": 2},
-      {"id": "if_else", "name": "if_else", "ccn": 2, "strict": true, "params": 1},
-      {"id": "nested_if", "name": "nested_if", "ccn": 3, "strict": true, "params": 2},
-      {"id": "else_if_chain", "name": "else_if_chain", "ccn": 5, "strict": true, "params": 1},
-      {"id": "for_loop", "name": "for_loop", "ccn": 2, "strict": true, "params": 1},
-      {"id": "while_loop", "name": "while_loop", "ccn": 2, "strict": true, "params": 1},
-      {"id": "do_while_loop", "name": "do_while_loop", "ccn": 2, "strict": true, "params": 1},
-      {"id": "switch_stmt", "name": "switch_stmt", "ccn": 4, "strict": true, "params": 1},
-      {"id": "logical_ops", "name": "logical_ops", "ccn": 4, "strict": true, "params": 3},
-      {"id": "nested_loops", "name": "nested_loops", "ccn": 4, "strict": true, "params": 2},
-      {"id": "ternary_max", "name": "ternary_max", "ccn": 2, "strict": true, "params": 2}
-    ]},
-    {"file": "c/macros_ifdef.c", "language": "C", "functions": [
-      {"id": "uses_macro", "name": "uses_macro", "ccn": 1, "strict": false, "note": "Lizard does not expand MAX(); full expansion would give 2", "expect_warning": "macro"},
-      {"id": "with_ifdef", "name": "with_ifdef", "ccn": 3, "strict": false, "note": "2 or 3 depending on how #else branches are treated", "expect_warning": "Conditional compilation"}
-    ]},
-    {"file": "cpp/classes.cpp", "language": "C++", "functions": [
-      {"id": "ctor", "name": "Calculator", "ccn": 2, "strict": true},
-      {"id": "add_int", "name": "add", "ccn": 1, "strict": true},
-      {"id": "add_double", "name": "add", "ccn": 1, "strict": true},
-      {"id": "add_three", "name": "add", "ccn": 2, "strict": true},
-      {"id": "classify", "name": "classify", "ccn": 3, "strict": true},
-      {"id": "scale", "name": "scale", "ccn": 3, "strict": true},
-      {"id": "day_type", "name": "day_type", "ccn": 3, "strict": true},
-      {"id": "sum_positive", "name": "sum_positive", "ccn": 3, "strict": true}
-    ]},
-    {"file": "cpp/templates_lambdas.cpp", "language": "C++", "functions": [
-      {"id": "max_of", "name": "max_of", "ccn": 2, "strict": false, "expect_warning": "template"},
-      {"id": "count_positive", "name": "count_positive", "ccn": 3, "strict": false, "expect_warning": "Lambda"}
-    ]},
-    {"file": "python/constructs.py", "language": "Python", "functions": [
-      {"id": "simple", "name": "simple", "ccn": 1, "strict": true},
-      {"id": "if_else", "name": "if_else", "ccn": 2, "strict": true},
-      {"id": "nested_if", "name": "nested_if", "ccn": 3, "strict": true},
-      {"id": "elif_chain", "name": "elif_chain", "ccn": 4, "strict": true},
-      {"id": "for_loop", "name": "for_loop", "ccn": 2, "strict": true},
-      {"id": "while_loop", "name": "while_loop", "ccn": 2, "strict": true},
-      {"id": "boolean_expr", "name": "boolean_expr", "ccn": 4, "strict": true},
-      {"id": "nested_loops", "name": "nested_loops", "ccn": 4, "strict": true},
-      {"id": "safe_div", "name": "safe_div", "ccn": 3, "strict": true},
-      {"id": "conditional_expr", "name": "conditional_expr", "ccn": 2, "strict": true},
-      {"id": "try_finally", "name": "try_finally", "ccn": 2, "strict": false, "note": "depends on whether 'finally' is counted"},
-      {"id": "comprehension", "name": "comprehension", "ccn": 3, "strict": false, "note": "comprehension for/if counting is convention-dependent"}
-    ]},
-    {"file": "python/match_statement.py", "language": "Python", "min_python": [3, 10], "functions": [
-      {"id": "http_status", "name": "http_status", "ccn": 3, "strict": false, "expect_warning": "match/case"}
-    ]}
+    {
+      "file": "c/constructs.c",
+      "language": "C",
+      "functions": [
+        {
+          "id": "simple_add",
+          "name": "simple_add",
+          "ccn": 1,
+          "strict": true,
+          "params": 2
+        },
+        {
+          "id": "if_else",
+          "name": "if_else",
+          "ccn": 2,
+          "strict": true,
+          "params": 1
+        },
+        {
+          "id": "nested_if",
+          "name": "nested_if",
+          "ccn": 3,
+          "strict": true,
+          "params": 2
+        },
+        {
+          "id": "else_if_chain",
+          "name": "else_if_chain",
+          "ccn": 5,
+          "strict": true,
+          "params": 1
+        },
+        {
+          "id": "for_loop",
+          "name": "for_loop",
+          "ccn": 2,
+          "strict": true,
+          "params": 1
+        },
+        {
+          "id": "while_loop",
+          "name": "while_loop",
+          "ccn": 2,
+          "strict": true,
+          "params": 1
+        },
+        {
+          "id": "do_while_loop",
+          "name": "do_while_loop",
+          "ccn": 2,
+          "strict": true,
+          "params": 1
+        },
+        {
+          "id": "switch_stmt",
+          "name": "switch_stmt",
+          "ccn": 4,
+          "strict": true,
+          "params": 1
+        },
+        {
+          "id": "logical_ops",
+          "name": "logical_ops",
+          "ccn": 4,
+          "strict": true,
+          "params": 3
+        },
+        {
+          "id": "nested_loops",
+          "name": "nested_loops",
+          "ccn": 4,
+          "strict": true,
+          "params": 2
+        },
+        {
+          "id": "ternary_max",
+          "name": "ternary_max",
+          "ccn": 2,
+          "strict": true,
+          "params": 2
+        }
+      ]
+    },
+    {
+      "file": "c/macros_ifdef.c",
+      "language": "C",
+      "functions": [
+        {
+          "id": "uses_macro",
+          "name": "uses_macro",
+          "ccn": 1,
+          "strict": false,
+          "note": "Lizard does not expand MAX(); full expansion would give 2",
+          "expect_warning": "macro"
+        },
+        {
+          "id": "with_ifdef",
+          "name": "with_ifdef",
+          "ccn": 3,
+          "strict": true,
+          "note": "union of both #ifdef/#else branches: 1 + if + if; the directives themselves are compile-time and not counted",
+          "expect_warning": "Conditional compilation"
+        }
+      ]
+    },
+    {
+      "file": "cpp/classes.cpp",
+      "language": "C++",
+      "functions": [
+        {
+          "id": "ctor",
+          "name": "Calculator",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "add_int",
+          "name": "add",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "add_double",
+          "name": "add",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "add_three",
+          "name": "add",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "classify",
+          "name": "classify",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "scale",
+          "name": "scale",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "day_type",
+          "name": "day_type",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "sum_positive",
+          "name": "sum_positive",
+          "ccn": 3,
+          "strict": true
+        }
+      ]
+    },
+    {
+      "file": "cpp/templates_lambdas.cpp",
+      "language": "C++",
+      "functions": [
+        {
+          "id": "max_of",
+          "name": "max_of",
+          "ccn": 2,
+          "strict": false,
+          "expect_warning": "template"
+        },
+        {
+          "id": "count_positive",
+          "name": "count_positive",
+          "ccn": 3,
+          "strict": true,
+          "expect_warning": "Lambda",
+          "note": "1 + for + if; the lambda body is a separate entry"
+        }
+      ]
+    },
+    {
+      "file": "python/constructs.py",
+      "language": "Python",
+      "functions": [
+        {
+          "id": "simple",
+          "name": "simple",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "if_else",
+          "name": "if_else",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "nested_if",
+          "name": "nested_if",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "elif_chain",
+          "name": "elif_chain",
+          "ccn": 4,
+          "strict": true
+        },
+        {
+          "id": "for_loop",
+          "name": "for_loop",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "while_loop",
+          "name": "while_loop",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "boolean_expr",
+          "name": "boolean_expr",
+          "ccn": 4,
+          "strict": true
+        },
+        {
+          "id": "nested_loops",
+          "name": "nested_loops",
+          "ccn": 4,
+          "strict": true
+        },
+        {
+          "id": "safe_div",
+          "name": "safe_div",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "conditional_expr",
+          "name": "conditional_expr",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "try_finally",
+          "name": "try_finally",
+          "ccn": 2,
+          "strict": false,
+          "note": "depends on whether 'finally' is counted"
+        },
+        {
+          "id": "comprehension",
+          "name": "comprehension",
+          "ccn": 3,
+          "strict": false,
+          "note": "comprehension for/if counting is convention-dependent"
+        }
+      ]
+    },
+    {
+      "file": "python/match_statement.py",
+      "language": "Python",
+      "min_python": [
+        3,
+        10
+      ],
+      "functions": [
+        {
+          "id": "http_status",
+          "name": "http_status",
+          "ccn": 3,
+          "strict": false,
+          "expect_warning": "match/case"
+        }
+      ]
+    },
+    {
+      "file": "cpp/amp_amp.cpp",
+      "language": "C++",
+      "functions": [
+        {
+          "id": "fwd_ref_user_example",
+          "name": "process",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "range_for_fwd",
+          "name": "range_for_fwd",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "cast_forward",
+          "name": "cast_forward",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "local_rref",
+          "name": "local_rref",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "both",
+          "name": "both",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "drain",
+          "name": "drain",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "both_t",
+          "name": "both_t",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "pick",
+          "name": "pick",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "fn_ptr",
+          "name": "fn_ptr",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "move_ctor",
+          "name": "Buf",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "move_assign",
+          "name": "operator =",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "ref_qualified",
+          "name": "get",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "peek_lvalue",
+          "name": "peek",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "lambda_outer",
+          "name": "use_lambdas",
+          "ccn": 4,
+          "strict": true
+        }
+      ]
+    },
+    {
+      "file": "c/amp_amp_c.c",
+      "language": "C",
+      "functions": [
+        {
+          "id": "and_basic",
+          "name": "and_basic",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "and_assign_in_cond",
+          "name": "and_assign_in_cond",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "and_or_mix",
+          "name": "and_or_mix",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "and_chain",
+          "name": "and_chain",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "and_stmt",
+          "name": "and_stmt",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "label_table",
+          "name": "label_table",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "and_fd",
+          "name": "and_fd",
+          "ccn": 3,
+          "strict": true
+        }
+      ]
+    },
+    {
+      "file": "cpp/refs_templates_ctor.cpp",
+      "language": "C++",
+      "functions": [
+        {
+          "id": "gate_ctor",
+          "name": "Gate",
+          "ccn": 3,
+          "strict": true,
+          "note": "1 + && + ? in the member-initialiser list"
+        },
+        {
+          "id": "gate_move",
+          "name": "Gate",
+          "ccn": 2,
+          "strict": true,
+          "note": "1 + && in the member-initialiser list"
+        },
+        {
+          "id": "gate_both",
+          "name": "both",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "box_get",
+          "name": "get",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "fwd_both",
+          "name": "fwd_both",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "decltype_ref",
+          "name": "decltype_ref",
+          "ccn": 1,
+          "strict": true
+        },
+        {
+          "id": "generic_lambda_outer",
+          "name": "generic_lambda_outer",
+          "ccn": 1,
+          "strict": true,
+          "note": "the lambda body is a separate entry"
+        }
+      ]
+    },
+    {
+      "file": "c/control_flow.c",
+      "language": "C",
+      "functions": [
+        {
+          "id": "for_and_or",
+          "name": "for_and_or",
+          "ccn": 5,
+          "strict": true
+        },
+        {
+          "id": "nested_ternary",
+          "name": "nested_ternary",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "switch_cases",
+          "name": "switch_cases",
+          "ccn": 4,
+          "strict": true
+        },
+        {
+          "id": "do_while_and",
+          "name": "do_while_and",
+          "ccn": 3,
+          "strict": true
+        },
+        {
+          "id": "else_if_chain",
+          "name": "else_if_chain",
+          "ccn": 4,
+          "strict": true
+        },
+        {
+          "id": "elvis",
+          "name": "elvis",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "goto_loop",
+          "name": "goto_loop",
+          "ccn": 2,
+          "strict": true
+        },
+        {
+          "id": "negations",
+          "name": "negations",
+          "ccn": 4,
+          "strict": true
+        }
+      ]
+    },
+    {
+      "file": "c/macros_expansion.c",
+      "language": "C",
+      "functions": [
+        {
+          "id": "macro_body_hidden",
+          "name": "macro_body_hidden",
+          "ccn": 2,
+          "strict": true,
+          "note": "IS_OK's && is inside the macro body: not counted (expanded code would be 3)"
+        },
+        {
+          "id": "macro_arg_counted",
+          "name": "macro_arg_counted",
+          "ccn": 2,
+          "strict": true,
+          "note": "the && is written in the macro argument: counted; CHECK's own if is hidden"
+        },
+        {
+          "id": "macro_with_if_inside",
+          "name": "macro_with_if_inside",
+          "ccn": 1,
+          "strict": true,
+          "note": "the if is inside SAFE_FREE's body: not counted (expanded code would be 2)"
+        },
+        {
+          "id": "macro_ternary_hidden",
+          "name": "macro_ternary_hidden",
+          "ccn": 1,
+          "strict": true,
+          "note": "MAX's ?: is inside the macro body: not counted (expanded code would be 2)"
+        }
+      ]
+    }
   ]
 }

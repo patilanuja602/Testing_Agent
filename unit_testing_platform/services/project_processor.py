@@ -1,6 +1,7 @@
 """Workflow glue: staged files + user selection -> AnalysisRun."""
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Collection, List, Optional
 
 from core.analyzer import ProgressCallback, analyze_files
@@ -22,11 +23,13 @@ def run_source_analysis(
     engine = engine or ComplexityEngine()
     to_analyze, not_selected = [], []
     for f in staged.files:
-        if f.language in selected_languages and f.display_path in selected_paths:
-            to_analyze.append(f)
+        if f.is_selectable(selected_languages) and f.display_path in selected_paths:
+            # An ambiguous header is analysed (and reported) as the language the user selected.
+            to_analyze.append(replace(f, language=f.effective_language(selected_languages)))
         else:
-            reason = ("Language not selected" if f.language not in selected_languages
-                      else "Not selected for analysis")
+            reason = ("Not selected for analysis" if f.is_selectable(selected_languages)
+                      else ("Language not selected" if not f.language_basis
+                            else f"Language not selected (resolved as {f.language.value}: {f.language_basis})"))
             not_selected.append(SkippedFile(f.display_path, reason, "not_selected"))
 
     run = analyze_files(

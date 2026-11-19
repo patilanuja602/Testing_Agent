@@ -81,7 +81,8 @@ def test_zip_upload_default_threshold_flags_every_function():
     assert m["Files skipped"] == "1"                                           # README.txt
 
 
-SAMPLE_COMPLEXITIES = [10, 8, 3, 3, 2, 1]    # uart_parse_frame, uart_send, push, clamp, uart_init, MovingAverage ctor
+# uart_parse_frame, uart_send, push, clamp, uart_init, MovingAverage ctor (1 + the '?' in its member-initialiser list)
+SAMPLE_COMPLEXITIES = [10, 8, 3, 3, 2, 2]
 
 
 @pytest.mark.parametrize("threshold", [1, 2, 3, 4, 8, 9, 10, 11])

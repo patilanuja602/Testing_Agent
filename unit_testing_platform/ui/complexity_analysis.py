@@ -70,13 +70,13 @@ def render(cfg: ThresholdConfig, limits: Limits) -> None:
     for err in staged.errors:
         st.error(err)
     selected_langs = [Language(v) for v in languages]
-    candidates = [f for f in staged.files if f.language in selected_langs]
+    candidates = [f for f in staged.files if f.is_selectable(selected_langs)]
 
     st.subheader("1. Confirm Files")
     st.write(f"Received **{staged.files_received}** file(s): **{len(staged.files)}** supported, "
              f"**{len(staged.skipped)}** skipped.")
     if candidates:
-        table = [{"Analyze": True, "File": f.display_path, "Language": f.language.value,
+        table = [{"Analyze": True, "File": f.display_path, "Language": f.effective_language(selected_langs).value + (" (header, ambiguous)" if f.header_ambiguous else ""),
                   "Size (KB)": round(f.size / 1024, 1), "Notes": "; ".join(f.warnings)} for f in candidates]
         edited = st.data_editor(pd.DataFrame(table), hide_index=True, disabled=["File", "Language", "Size (KB)", "Notes"],
                                 key=f"src_select_{sig}_{'-'.join(sorted(languages))}")
