@@ -1,0 +1,4 @@
+No executable lines
+
+/home/gitadmin/Documents/Anuja/benchmark_projects/sensor_monitoring_c/src/sensor_monitoring.gcno:cannot open notes file
+/home/gitadmin/Documents/Anuja/benchmark_projects/sensor_monitoring_c/src/sensor_monitoring.gcda:cannot open data file, assuming not executed

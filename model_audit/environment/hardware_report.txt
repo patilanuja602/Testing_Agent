@@ -1,0 +1,73 @@
+================================================================================
+HARDWARE & SYSTEM SPECIFICATIONS REPORT
+================================================================================
+Generated: 2026-11-26
+Platform: Advanced Agentic AI Testing Platform (Evaluation Harness)
+
+1. SYSTEM & OPERATING SYSTEM
+--------------------------------------------------------------------------------
+OS: Linux 5.15.0-138-generic #148-Ubuntu SMP x86_64
+Distribution: Ubuntu 22.04.5 LTS (Jammy Jellyfish)
+Hostname: gitadmin-OptiPlex-7090
+Kernel: Linux 5.15.0-138-generic
+
+2. CPU ARCHITECTURE
+--------------------------------------------------------------------------------
+Model: AMD Ryzen 7 3700X 8-Core Processor
+Architecture: x86_64
+Sockets: 1
+Cores per socket: 8
+Threads per core: 2
+Total Logical Threads: 16
+Base Clock: 3.6 GHz (Boost up to 4.4 GHz)
+L1d / L1i Cache: 256 KiB (8 instances) / 256 KiB (8 instances)
+L2 Cache: 4 MiB (8 instances)
+L3 Cache: 32 MiB (2 instances)
+Flags: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
+       clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm
+       constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl
+       pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave
+       avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse
+       3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext
+       perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall
+       fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni
+       xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local
+       clzero xsaveerptr rdpru wbnoinvd arat npt lbrv svm_lock nrip_save tsc_scale
+       vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload
+       vgif v_spec_ctrl umip rdpid overflow_recov succor smca sev sev_es
+
+3. SYSTEM MEMORY & STORAGE
+--------------------------------------------------------------------------------
+Total RAM: 31 GiB (32,813,276 KiB)
+Available RAM (Free + Buff/Cache): ~26 GiB
+Swap Total: 2.0 GiB (Swap Free: 2.0 GiB)
+Root Mount Point: /home/gitadmin/Documents/Anuja on /dev/sda2 (ext4)
+Total Disk Space: 1.8 TB
+Available Disk Space: 1.2 TB (32% utilized)
+
+4. GPU & ACCELERATOR SPECIFICATIONS
+--------------------------------------------------------------------------------
+GPU Name: NVIDIA GeForce RTX 4060
+GPU Count: 1
+Device ID: 00000000:2B:00.0
+Architecture: Ada Lovelace
+Compute Capability: 8.9 (sm_89)
+Total VRAM: 8188 MiB (~8 GB GDDR6)
+Base VRAM Usage (Idle Desktop): 454 MiB
+Available VRAM for Inference: ~7734 MiB (~7.55 GB)
+Power Limit: 115 W
+NVIDIA Driver Version: 580.126.20
+CUDA Driver Version: 13.0
+CUDA Toolkit: CUDA 12.8.93 (/usr/local/cuda-12.8)
+NVCC Path: /usr/local/cuda-12.8/bin/nvcc
+CUDA Host Compiler: GNU 11.4.0 (x86_64-linux-gnu)
+
+5. COMPILER & BUILD TOOLS
+--------------------------------------------------------------------------------
+GCC: 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3)
+G++: 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3)
+GCOV: 11.4.0
+CMake: 3.22.1
+GNU Make: 4.3
+Python: 3.10.12 (/usr/bin/python3, virtualenv at ./venv)
+================================================================================

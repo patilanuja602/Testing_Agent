@@ -1,0 +1,34 @@
+```cpp
+#include "banking_transactions.hpp"
+#include <cassert>
+
+int main() {
+    // Test zero amount
+    assert(bank::FeeSchedule::calculate_fee(0, bank::AccountType::STANDARD, 10) == 0);
+    assert(bank::FeeSchedule::calculate_fee(0, bank::AccountType::PREMIUM, 10) == 0);
+    assert(bank::FeeSchedule::calculate_fee(0, bank::AccountType::STUDENT, 10) == 0);
+    assert(bank::FeeSchedule::calculate_fee(0, bank::AccountType::BUSINESS, 10) == 0);
+
+    // Test free tier transactions (count <= 5)
+    assert(bank::FeeSchedule::calculate_fee(100, bank::AccountType::STANDARD, 5) == 0);
+    assert(bank::FeeSchedule::calculate_fee(100, bank::AccountType::PREMIUM, 5) == 0);
+    assert(bank::FeeSchedule::calculate_fee(100, bank::AccountType::STUDENT, 5) == 0);
+    assert(bank::FeeSchedule::calculate_fee(100, bank::AccountType::BUSINESS, 5) == 0);
+
+    // Test fees for PREMIUM account when count > 5
+    assert(bank::FeeSchedule::calculate_fee(100, bank::AccountType::PREMIUM, 6) == 10);
+
+    // Test fees for STUDENT account when count > 5
+    assert(bank::FeeSchedule::calculate_fee(100, bank::AccountType::STUDENT, 6) == 5);
+
+    // Test fees for BUSINESS account when count > 5
+    assert(bank::FeeSchedule::calculate_fee(100, bank::AccountType::BUSINESS, 6) == 0.5 * 100 * 0.005);
+
+    // Test fees for STANDARD account when count > 5
+    assert(bank::FeeSchedule::calculate_fee(100, bank::AccountType::STANDARD, 6) == 1.0 * 100 * 0.01);
+
+    return 0;
+}
+``` [end of text]
+
+

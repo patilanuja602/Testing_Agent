@@ -1,0 +1,52 @@
+#include "banking_transactions.hpp"
+#include <cassert>
+#include <vector>
+#include <string>
+
+namespace bank {
+
+uint32_t compute_hash(const std::string &tx_id, long amount, uint32_t prev_hash) {
+    // Dummy implementation for testing purposes
+    return (tx_id.length() + amount + prev_hash) % 1000000;
+}
+
+bool verify_integrity(const std::vector<TransactionRecord> &records) {
+    if (records.empty()) return true;
+
+    if (records[0].prev_hash != 0) return false;
+
+    for (size_t i = 0; i < records.size(); ++i) {
+        uint32_t expected_hash = compute_hash(records[i].tx_id, records[i].amount, i == 0 ? 0 : records[i - 1].hash);
+        if (records[i].hash != expected_hash) return false;
+    }
+
+    for (size_t i = 1; i < records.size(); ++i) {
+        if (records[i].prev_hash != records[i - 1].hash) return false;
+    }
+
+    return true;
+}
+
+} // namespace bank
+
+int main() {
+    // Test empty records vector
+    assert(bank::verify_integrity({}) == true);
+
+    // Test valid 2-record chain
+    bank::TransactionRecord rec1 = {"tx1", 100, 0, 0};
+    bank::TransactionRecord rec2 = {"tx2", 200, 0, 0};
+    rec1.hash = bank::compute_hash(rec1.tx_id, rec1.amount, rec1.prev_hash);
+    rec2.hash = bank::compute_hash(rec2.tx_id, rec2.amount, rec1.hash);
+    assert(bank::verify_integrity({rec1, rec2}) == true);
+
+    // Test broken prev_hash link
+    rec2.prev_hash = 123456; // Incorrect prev_hash
+    assert(bank::verify_integrity({rec1, rec2}) == false);
+
+    // Test tampered transaction data
+    rec2.amount = 250; // Tampered amount
+    assert(bank::verify_integrity({rec1, rec2}) == false);
+
+    return 0;
+}

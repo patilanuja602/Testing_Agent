@@ -1,0 +1,304 @@
+        -:    0:Source:/tmp/cov_build_C-07/sensor_monitoring.c
+        -:    0:Graph:bin_C-07-sensor_monitoring.gcno
+        -:    0:Data:bin_C-07-sensor_monitoring.gcda
+        -:    0:Runs:1
+        -:    1:#include "sensor_monitoring.h"
+        -:    2:
+        -:    3:/* 1. sensor_raw_valid: validates raw 12-bit ADC range [0, 4095] */
+function sensor_raw_valid called 0 returned 0% blocks executed 0%
+    #####:    4:bool sensor_raw_valid(int raw_adc) {
+    #####:    5:    if (raw_adc < SENSOR_RAW_MIN) {
+branch  0 never executed
+branch  1 never executed
+    #####:    6:        return false;
+        -:    7:    }
+    #####:    8:    if (raw_adc > SENSOR_RAW_MAX) {
+branch  0 never executed
+branch  1 never executed
+    #####:    9:        return false;
+        -:   10:    }
+    #####:   11:    return true;
+        -:   12:}
+        -:   13:
+        -:   14:/* 2. sensor_scale_temperature: Linear scaling Temperature_C = (raw_adc * 0.0805) - 40.0 */
+function sensor_scale_temperature called 0 returned 0% blocks executed 0%
+    #####:   15:int sensor_scale_temperature(int raw_adc, float *temp_c) {
+    #####:   16:    if (temp_c == NULL) {
+branch  0 never executed
+branch  1 never executed
+    #####:   17:        return SENSOR_ERR_NULL_PTR;
+        -:   18:    }
+    #####:   19:    if (!sensor_raw_valid(raw_adc)) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   20:        *temp_c = -999.0f;
+    #####:   21:        return SENSOR_ERR_OUT_OF_RANGE;
+        -:   22:    }
+    #####:   23:    *temp_c = ((float)raw_adc * 0.0805f) - 40.0f;
+    #####:   24:    return SENSOR_OK;
+        -:   25:}
+        -:   26:
+        -:   27:/* 3. sensor_battery_soc_eval: SoC < 15.0% triggers warning, >= 15.0% clears warning */
+function sensor_battery_soc_eval called 0 returned 0% blocks executed 0%
+    #####:   28:int sensor_battery_soc_eval(float soc_percent, bool *low_battery_warning) {
+    #####:   29:    if (low_battery_warning == NULL) {
+branch  0 never executed
+branch  1 never executed
+    #####:   30:        return SENSOR_ERR_NULL_PTR;
+        -:   31:    }
+    #####:   32:    if (soc_percent < 0.0f || soc_percent > 100.0f) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   33:        return SENSOR_ERR_OUT_OF_RANGE;
+        -:   34:    }
+    #####:   35:    if (soc_percent < 15.0f) {
+branch  0 never executed
+branch  1 never executed
+    #####:   36:        *low_battery_warning = true;
+        -:   37:    } else {
+    #####:   38:        *low_battery_warning = false;
+        -:   39:    }
+    #####:   40:    return SENSOR_OK;
+        -:   41:}
+        -:   42:
+        -:   43:/* 4. sensor_pressure_window_check: [10.0, 150.0] bar inclusive */
+function sensor_pressure_window_check called 0 returned 0% blocks executed 0%
+    #####:   44:PressureStatus sensor_pressure_window_check(float pressure_bar) {
+    #####:   45:    if (pressure_bar < 10.0f) {
+branch  0 never executed
+branch  1 never executed
+    #####:   46:        return PRESSURE_FAULT_UNDERPRESSURE;
+        -:   47:    }
+    #####:   48:    if (pressure_bar > 150.0f) {
+branch  0 never executed
+branch  1 never executed
+    #####:   49:        return PRESSURE_FAULT_OVERPRESSURE;
+        -:   50:    }
+    #####:   51:    return PRESSURE_OK;
+        -:   52:}
+        -:   53:
+        -:   54:/* 5. sensor_can_frame_validate: ID in [0x2F0, 0x2F7], DLC==8, rolling counter modulo 16 */
+function sensor_can_frame_validate called 0 returned 0% blocks executed 0%
+    #####:   55:int sensor_can_frame_validate(uint16_t id, uint8_t dlc, uint8_t counter, uint8_t last_counter) {
+    #####:   56:    if (id < 0x2F0 || id > 0x2F7) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:   57:        return SENSOR_ERR_OUT_OF_RANGE;
+        -:   58:    }
+    #####:   59:    if (dlc != 8) {
+branch  0 never executed
+branch  1 never executed
+    #####:   60:        return SENSOR_ERR_INVALID_DLC;
+        -:   61:    }
+    #####:   62:    uint8_t expected = (last_counter + 1) & 0x0F;
+    #####:   63:    if (counter != expected) {
+branch  0 never executed
+branch  1 never executed
+    #####:   64:        return SENSOR_ERR_COUNTER_SEQUENCE;
+        -:   65:    }
+    #####:   66:    return SENSOR_OK;
+        -:   67:}
+        -:   68:
+        -:   69:/* 6. sensor_uart_crc16_verify: CRC-16-CCITT (poly 0x1021, init 0xFFFF) */
+function sensor_uart_crc16_verify called 0 returned 0% blocks executed 0%
+    #####:   70:int sensor_uart_crc16_verify(const uint8_t *payload, uint8_t len, uint16_t expected_crc) {
+    #####:   71:    if (payload == NULL) {
+branch  0 never executed
+branch  1 never executed
+    #####:   72:        return SENSOR_ERR_NULL_PTR;
+        -:   73:    }
+    #####:   74:    if (len == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:   75:        return SENSOR_ERR_OUT_OF_RANGE;
+        -:   76:    }
+    #####:   77:    uint16_t crc = 0xFFFF;
+    #####:   78:    for (uint8_t i = 0; i < len; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:   79:        crc ^= (uint16_t)payload[i] << 8;
+    #####:   80:        for (uint8_t bit = 0; bit < 8; bit++) {
+branch  0 never executed
+branch  1 never executed
+    #####:   81:            if (crc & 0x8000) {
+branch  0 never executed
+branch  1 never executed
+    #####:   82:                crc = (crc << 1) ^ 0x1021;
+        -:   83:            } else {
+    #####:   84:                crc = crc << 1;
+        -:   85:            }
+        -:   86:        }
+        -:   87:    }
+    #####:   88:    if (crc != expected_crc) {
+branch  0 never executed
+branch  1 never executed
+    #####:   89:        return SENSOR_ERR_CRC_MISMATCH;
+        -:   90:    }
+    #####:   91:    return SENSOR_OK;
+        -:   92:}
+        -:   93:
+        -:   94:/* 7. sensor_transient_error_filter: 3 consecutive errors triggers SENSOR_OFFLINE */
+function sensor_transient_error_filter called 6 returned 100% blocks executed 100%
+        6:   95:int sensor_transient_error_filter(int error_occurred, int *consecutive_errors, int *status_offline) {
+        6:   96:    if (consecutive_errors == NULL || status_offline == NULL) {
+branch  0 taken 5 (fallthrough)
+branch  1 taken 1
+branch  2 taken 1 (fallthrough)
+branch  3 taken 4
+        2:   97:        return SENSOR_ERR_NULL_PTR;
+        -:   98:    }
+        4:   99:    if (error_occurred) {
+branch  0 taken 3 (fallthrough)
+branch  1 taken 1
+        3:  100:        (*consecutive_errors)++;
+        3:  101:        if (*consecutive_errors >= 3) {
+branch  0 taken 2 (fallthrough)
+branch  1 taken 1
+        2:  102:            *status_offline = 1;
+        -:  103:        }
+        -:  104:    } else {
+        1:  105:        *consecutive_errors = 0;
+        -:  106:    }
+        4:  107:    return SENSOR_OK;
+        -:  108:}
+        -:  109:
+        -:  110:/* 8. sensor_circular_buffer_push: pushes uint32 sample, returns error if full */
+function sensor_circular_buffer_push called 0 returned 0% blocks executed 0%
+    #####:  111:int sensor_circular_buffer_push(SensorCircularBuffer *buf, uint32_t sample) {
+    #####:  112:    if (buf == NULL) {
+branch  0 never executed
+branch  1 never executed
+    #####:  113:        return SENSOR_ERR_NULL_PTR;
+        -:  114:    }
+    #####:  115:    if (buf->count >= SENSOR_BUF_CAPACITY) {
+branch  0 never executed
+branch  1 never executed
+    #####:  116:        return SENSOR_ERR_BUFFER_FULL;
+        -:  117:    }
+    #####:  118:    size_t write_idx = (buf->head + buf->count) % SENSOR_BUF_CAPACITY;
+    #####:  119:    buf->data[write_idx] = sample;
+    #####:  120:    buf->count++;
+    #####:  121:    return SENSOR_OK;
+        -:  122:}
+        -:  123:
+        -:  124:/* 9. sensor_calibration_lookup: linear interpolation from sorted table */
+function sensor_calibration_lookup called 0 returned 0% blocks executed 0%
+    #####:  125:int sensor_calibration_lookup(float raw_val, const CalibrationPoint *table, size_t table_size, float *calibrated_out) {
+    #####:  126:    if (table == NULL || calibrated_out == NULL) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  127:        return SENSOR_ERR_NULL_PTR;
+        -:  128:    }
+    #####:  129:    if (table_size == 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  130:        return SENSOR_ERR_EMPTY_TABLE;
+        -:  131:    }
+    #####:  132:    if (raw_val <= table[0].raw) {
+branch  0 never executed
+branch  1 never executed
+    #####:  133:        *calibrated_out = table[0].calibrated;
+    #####:  134:        return SENSOR_OK;
+        -:  135:    }
+    #####:  136:    if (raw_val >= table[table_size - 1].raw) {
+branch  0 never executed
+branch  1 never executed
+    #####:  137:        *calibrated_out = table[table_size - 1].calibrated;
+    #####:  138:        return SENSOR_OK;
+        -:  139:    }
+    #####:  140:    for (size_t i = 0; i < table_size - 1; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####:  141:        if (raw_val >= table[i].raw && raw_val <= table[i + 1].raw) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  142:            float span = table[i + 1].raw - table[i].raw;
+    #####:  143:            if (span == 0.0f) {
+branch  0 never executed
+branch  1 never executed
+    #####:  144:                *calibrated_out = table[i].calibrated;
+        -:  145:            } else {
+    #####:  146:                float frac = (raw_val - table[i].raw) / span;
+    #####:  147:                *calibrated_out = table[i].calibrated + frac * (table[i + 1].calibrated - table[i].calibrated);
+        -:  148:            }
+    #####:  149:            return SENSOR_OK;
+        -:  150:        }
+        -:  151:    }
+    #####:  152:    return SENSOR_ERR_OUT_OF_RANGE;
+        -:  153:}
+        -:  154:
+        -:  155:/* 10. sensor_fsm_step: Conveyor state machine transition logic */
+function sensor_fsm_step called 0 returned 0% blocks executed 0%
+    #####:  156:ConveyorState sensor_fsm_step(ConveyorState current_state, MotorCommand cmd, float current_rpm, float target_rpm, bool hardware_fault) {
+    #####:  157:    if (hardware_fault || cmd == CMD_EMERGENCY_STOP) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  158:        return FSM_FAULT_LATCHED;
+        -:  159:    }
+    #####:  160:    switch (current_state) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  161:        case FSM_STANDBY:
+    #####:  162:            if (cmd == CMD_START) {
+branch  0 never executed
+branch  1 never executed
+    #####:  163:                return FSM_ACCELERATING;
+        -:  164:            }
+    #####:  165:            break;
+    #####:  166:        case FSM_ACCELERATING:
+    #####:  167:            if (current_rpm >= target_rpm && target_rpm > 0.0f) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  168:                return FSM_RUNNING;
+        -:  169:            }
+    #####:  170:            if (cmd == CMD_STOP) {
+branch  0 never executed
+branch  1 never executed
+    #####:  171:                return FSM_BRAKING;
+        -:  172:            }
+    #####:  173:            break;
+    #####:  174:        case FSM_RUNNING:
+    #####:  175:            if (cmd == CMD_STOP) {
+branch  0 never executed
+branch  1 never executed
+    #####:  176:                return FSM_BRAKING;
+        -:  177:            }
+    #####:  178:            break;
+    #####:  179:        case FSM_BRAKING:
+    #####:  180:            if (current_rpm <= 0.0f) {
+branch  0 never executed
+branch  1 never executed
+    #####:  181:                return FSM_STANDBY;
+        -:  182:            }
+    #####:  183:            break;
+    #####:  184:        case FSM_FAULT_LATCHED:
+    #####:  185:            if (cmd == CMD_RESET && !hardware_fault) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  186:                return FSM_STANDBY;
+        -:  187:            }
+    #####:  188:            return FSM_FAULT_LATCHED;
+    #####:  189:        default:
+    #####:  190:            return FSM_STANDBY;
+        -:  191:    }
+    #####:  192:    return current_state;
+        -:  193:}

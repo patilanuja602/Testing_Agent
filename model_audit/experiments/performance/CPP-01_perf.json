@@ -1,0 +1,12 @@
+{
+  "func_id": "CPP-01",
+  "seed": 42,
+  "temperature": 0.2,
+  "wall_time_sec": 16.275615453720093,
+  "prompt_eval_ms": 213.15,
+  "prompt_eval_tokens": 303,
+  "prompt_eval_speed_ts": 1421.54,
+  "eval_ms": 13650.8,
+  "eval_tokens": 487,
+  "eval_speed_ts": 35.68
+}

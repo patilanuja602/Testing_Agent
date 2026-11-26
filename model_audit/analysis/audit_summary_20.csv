@@ -1,0 +1,21 @@
+func_id,language,signature,compile_success,exec_success,exec_rc,line_coverage,branch_coverage,eval_speed_ts,wall_time_sec
+C-01,C,bool sensor_raw_valid(int raw_adc);,True,True,0,0.0,0.0,35.66,8.055725336074829
+C-02,C,"int sensor_scale_temperature(int raw_adc, float *temp_c);",True,False,-6,0.0,0.0,35.52,12.340306758880615
+C-03,C,"int sensor_battery_soc_eval(float soc_percent, bool *low_battery_warning);",True,True,0,0.0,0.0,35.53,13.958873748779297
+C-04,C,PressureStatus sensor_pressure_window_check(float pressure_bar);,True,True,0,0.0,0.0,35.45,9.206758975982666
+C-05,C,"int sensor_can_frame_validate(uint16_t id, uint8_t dlc, uint8_t counter, uint8_t last_counter);",True,False,-6,0.0,0.0,35.53,11.73802638053894
+C-06,C,"int sensor_uart_crc16_verify(const uint8_t *payload, uint8_t len, uint16_t expected_crc);",True,False,-6,0.0,0.0,34.66,11.7693932056427
+C-07,C,"int sensor_transient_error_filter(int error_occurred, int *consecutive_errors, int *status_offline);",True,True,0,0.0,0.0,35.64,17.822977304458618
+C-08,C,"int sensor_circular_buffer_push(SensorCircularBuffer *buf, uint32_t sample);",True,False,-6,0.0,0.0,35.65,12.724764347076416
+C-09,C,"int sensor_calibration_lookup(float raw_val, const CalibrationPoint *table, size_t table_size, float *calibrated_out);",True,False,-6,0.0,0.0,35.58,14.861463785171509
+C-10,C,"ConveyorState sensor_fsm_step(ConveyorState current_state, MotorCommand cmd, float current_rpm, float target_rpm, bool hardware_fault);",True,False,-6,0.0,0.0,35.5,17.66505265235901
+CPP-01,C++,WithdrawResult Account::withdraw(long amount);,True,False,-6,0.0,0.0,35.68,16.275615453720093
+CPP-02,C++,DepositResult Account::deposit(long amount);,True,True,0,0.0,0.0,35.79,9.160986423492432
+CPP-03,C++,"TransferResult Account::transfer_to(Account &destination, long amount);",False,False,-1,0.0,0.0,35.73,12.742862224578857
+CPP-04,C++,"double InterestCalculator::calculate_accrued(double principal, double annual_rate, int days);",True,False,-6,0.0,0.0,35.72,10.813109159469604
+CPP-05,C++,bool TransactionLogger::log_transaction(const Transaction &tx);,True,False,-6,0.0,0.0,35.68,13.09762167930603
+CPP-06,C++,"AuthStatus SecurityManager::authenticate(const std::string &username, const std::string &provided_hash, const std::string &stored_hash, int current_attempts);",True,True,0,0.0,0.0,35.72,8.783758640289307
+CPP-07,C++,bool SessionToken::is_valid(uint64_t current_timestamp) const;,True,True,0,0.0,0.0,35.8,9.391660213470459
+CPP-08,C++,"long CurrencyConverter::convert(long amount_cents, const std::string &from_curr, const std::string &to_curr) const;",False,False,-1,0.0,0.0,35.59,17.5637047290802
+CPP-09,C++,"long FeeSchedule::calculate_fee(long amount_cents, AccountType type, int monthly_tx_count);",True,False,-6,0.0,0.0,35.63,16.251776695251465
+CPP-10,C++,bool AuditTrail::verify_integrity(const std::vector<TransactionRecord> &records);,True,False,-6,0.0,0.0,35.64,16.08340835571289

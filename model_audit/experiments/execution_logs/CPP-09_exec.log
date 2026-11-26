@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_CPP-09
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_CPP-09: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-09.cpp:24: int main(): Assertion `bank::FeeSchedule::calculate_fee(100, bank::AccountType::BUSINESS, 6) == 0.5 * 100 * 0.005' failed.
+

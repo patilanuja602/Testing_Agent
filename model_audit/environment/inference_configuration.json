@@ -1,0 +1,40 @@
+{
+  "model_identity": {
+    "model_name": "Qwen2.5-Coder-7B-Instruct",
+    "quantization": "Q4_K_M",
+    "architecture": "qwen2",
+    "parameters": "7.61B",
+    "context_window_max": 32768,
+    "model_file": "/home/gitadmin/Documents/Anuja/models/qwen2.5-coder-7b-instruct-q4_k_m.gguf",
+    "sha256": "509287f78cb4d4cf6b3843734733b914b2c158e43e22a7f4bf5e963800894d3c",
+    "file_size_bytes": 4683073536
+  },
+  "runtime_environment": {
+    "framework": "llama.cpp",
+    "commit": "abca6920035ed77c1d80eaf23d066e9d3a7c5b23",
+    "cuda_build_dir": "/home/gitadmin/Documents/Anuja/llama.cpp/build-cuda",
+    "cpu_build_dir": "/home/gitadmin/Documents/Anuja/llama.cpp/build-cpu",
+    "target_device": "NVIDIA GeForce RTX 4060 (8GB VRAM)",
+    "cuda_version": "12.8",
+    "driver_version": "580.126.20",
+    "compute_capability": "sm_89"
+  },
+  "sampling_parameters": {
+    "temperature": 0.2,
+    "top_p": 0.95,
+    "top_k": 40,
+    "seed": 42,
+    "repeat_penalty": 1.1,
+    "n_ctx": 4096,
+    "n_predict": 1536,
+    "n_gpu_layers": 33,
+    "flash_attn": true
+  },
+  "hardware_allocation": {
+    "offload_strategy": "full_gpu_offload",
+    "gpu_layers_offloaded": 33,
+    "cpu_layers_remaining": 0,
+    "vram_budget_mb": 8188,
+    "threads": 8
+  }
+}

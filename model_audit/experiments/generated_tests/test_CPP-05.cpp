@@ -1,0 +1,34 @@
+#include "banking_transactions.hpp"
+#include <cassert>
+#include <string>
+
+int main() {
+    // Test empty tx_id
+    bank::TransactionLogger logger;
+    bank::Transaction tx1 = {"", 100, "2023-04-01T12:00:00", "deposit"};
+    assert(!logger.log_transaction(tx1));
+
+    // Test zero amount
+    bank::Transaction tx2 = {"123", 0, "2023-04-01T12:01:00", "withdrawal"};
+    assert(!logger.log_transaction(tx2));
+
+    // Test valid logging
+    bank::Transaction tx3 = {"456", 500, "2023-04-01T12:02:00", "transfer"};
+    assert(logger.log_transaction(tx3));
+    assert(logger.count() == 1);
+
+    // Test capacity eviction behavior
+    bank::TransactionLogger logger2(2);
+    bank::Transaction tx4 = {"789", 1000, "2023-04-01T12:03:00", "deposit"};
+    bank::Transaction tx5 = {"101", 1500, "2023-04-01T12:04:00", "withdrawal"};
+    assert(logger2.log_transaction(tx4));
+    assert(logger2.log_transaction(tx5));
+    assert(!logger2.log_transaction(tx3)); // Should fail due to capacity
+    assert(logger2.count() == 2);
+
+    // Test clear
+    logger2.clear();
+    assert(logger2.count() == 0);
+
+    return 0;
+}

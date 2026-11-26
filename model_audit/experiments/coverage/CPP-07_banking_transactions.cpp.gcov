@@ -1,0 +1,396 @@
+        -:    0:Source:/tmp/cov_build_CPP-07/banking_transactions.cpp
+        -:    0:Graph:bin_CPP-07-banking_transactions.gcno
+        -:    0:Data:bin_CPP-07-banking_transactions.gcda
+        -:    0:Runs:1
+        -:    1:#include "banking_transactions.hpp"
+        -:    2:#include <climits>
+        -:    3:#include <cmath>
+        -:    4:
+        -:    5:namespace bank {
+        -:    6:
+function _ZN4bank7AccountC2Ell called 0 returned 0% blocks executed 0%
+    #####:    7:Account::Account(long initial_balance, long daily_limit)
+    #####:    8:    : balance_(initial_balance), daily_limit_(daily_limit), daily_withdrawn_(0) {}
+        -:    9:
+function _ZN4bank7Account8withdrawEl called 0 returned 0% blocks executed 0%
+    #####:   10:WithdrawResult Account::withdraw(long amount) {
+    #####:   11:    if (amount <= 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:   12:        return WithdrawResult::INVALID_AMOUNT;
+        -:   13:    }
+    #####:   14:    if (amount > balance_) {
+branch  0 never executed
+branch  1 never executed
+    #####:   15:        return WithdrawResult::INSUFFICIENT_FUNDS;
+        -:   16:    }
+    #####:   17:    if (daily_withdrawn_ + amount > daily_limit_) {
+branch  0 never executed
+branch  1 never executed
+    #####:   18:        return WithdrawResult::DAILY_LIMIT_EXCEEDED;
+        -:   19:    }
+    #####:   20:    balance_ -= amount;
+    #####:   21:    daily_withdrawn_ += amount;
+    #####:   22:    return WithdrawResult::SUCCESS;
+        -:   23:}
+        -:   24:
+function _ZN4bank7Account7depositEl called 0 returned 0% blocks executed 0%
+    #####:   25:DepositResult Account::deposit(long amount) {
+    #####:   26:    if (amount <= 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:   27:        return DepositResult::INVALID_AMOUNT;
+        -:   28:    }
+    #####:   29:    if (LONG_MAX - amount < balance_) {
+branch  0 never executed
+branch  1 never executed
+    #####:   30:        return DepositResult::OVERFLOW_ERROR;
+        -:   31:    }
+    #####:   32:    balance_ += amount;
+    #####:   33:    return DepositResult::SUCCESS;
+        -:   34:}
+        -:   35:
+function _ZN4bank7Account11transfer_toERS0_l called 0 returned 0% blocks executed 0%
+    #####:   36:TransferResult Account::transfer_to(Account &destination, long amount) {
+    #####:   37:    if (this == &destination) {
+branch  0 never executed
+branch  1 never executed
+    #####:   38:        return TransferResult::SELF_TRANSFER_PROHIBITED;
+        -:   39:    }
+    #####:   40:    WithdrawResult w_res = withdraw(amount);
+call    0 never executed
+    #####:   41:    if (w_res != WithdrawResult::SUCCESS) {
+branch  0 never executed
+branch  1 never executed
+    #####:   42:        return TransferResult::SOURCE_WITHDRAW_FAILED;
+        -:   43:    }
+    #####:   44:    DepositResult d_res = destination.deposit(amount);
+call    0 never executed
+    #####:   45:    if (d_res != DepositResult::SUCCESS) {
+branch  0 never executed
+branch  1 never executed
+        -:   46:        // Rollback source account withdrawal to preserve atomicity invariant
+    #####:   47:        deposit(amount);
+call    0 never executed
+    #####:   48:        return TransferResult::DESTINATION_CREDIT_FAILED;
+        -:   49:    }
+    #####:   50:    return TransferResult::SUCCESS;
+        -:   51:}
+        -:   52:
+function _ZNK4bank7Account11get_balanceEv called 0 returned 0% blocks executed 0%
+    #####:   53:long Account::get_balance() const { return balance_; }
+function _ZNK4bank7Account19get_daily_withdrawnEv called 0 returned 0% blocks executed 0%
+    #####:   54:long Account::get_daily_withdrawn() const { return daily_withdrawn_; }
+function _ZNK4bank7Account15get_daily_limitEv called 0 returned 0% blocks executed 0%
+    #####:   55:long Account::get_daily_limit() const { return daily_limit_; }
+function _ZN4bank7Account17reset_daily_limitEv called 0 returned 0% blocks executed 0%
+    #####:   56:void Account::reset_daily_limit() { daily_withdrawn_ = 0; }
+        -:   57:
+function _ZN4bank18InterestCalculator17calculate_accruedEddi called 0 returned 0% blocks executed 0%
+    #####:   58:double InterestCalculator::calculate_accrued(double principal, double annual_rate, int days) {
+    #####:   59:    if (principal < 0.0 || annual_rate < 0.0 || days < 0) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:   60:        return -1.0;
+        -:   61:    }
+        -:   62:    // Simple daily interest accrual using 365-day convention
+    #####:   63:    double daily_rate = annual_rate / 365.0;
+    #####:   64:    return principal * daily_rate * static_cast<double>(days);
+        -:   65:}
+        -:   66:
+function _ZN4bank17TransactionLoggerC2Em called 0 returned 0% blocks executed 0%
+    #####:   67:TransactionLogger::TransactionLogger(size_t max_capacity) : max_capacity_(max_capacity) {}
+call    0 never executed
+        -:   68:
+function _ZN4bank17TransactionLogger15log_transactionERKNS_11TransactionE called 0 returned 0% blocks executed 0%
+    #####:   69:bool TransactionLogger::log_transaction(const Transaction &tx) {
+    #####:   70:    if (tx.tx_id.empty() || tx.amount == 0) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+    #####:   71:        return false;
+        -:   72:    }
+    #####:   73:    if (logs_.size() >= max_capacity_) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   74:        logs_.erase(logs_.begin());
+call    0 never executed
+call    1 never executed
+call    2 never executed
+branch  3 never executed
+branch  4 never executed
+        -:   75:    }
+    #####:   76:    logs_.push_back(tx);
+call    0 never executed
+    #####:   77:    return true;
+        -:   78:}
+        -:   79:
+function _ZNK4bank17TransactionLogger5countEv called 0 returned 0% blocks executed 0%
+    #####:   80:size_t TransactionLogger::count() const { return logs_.size(); }
+call    0 never executed
+function _ZN4bank17TransactionLogger5clearEv called 0 returned 0% blocks executed 0%
+    #####:   81:void TransactionLogger::clear() { logs_.clear(); }
+call    0 never executed
+        -:   82:
+function _ZN4bank15SecurityManager12authenticateERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_S8_i called 0 returned 0% blocks executed 0%
+    #####:   83:AuthStatus SecurityManager::authenticate(const std::string &username,
+        -:   84:                                         const std::string &provided_hash,
+        -:   85:                                         const std::string &stored_hash,
+        -:   86:                                         int current_attempts) {
+    #####:   87:    if (username.empty() || provided_hash.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+branch  6 never executed
+branch  7 never executed
+    #####:   88:        return AuthStatus::INVALID_INPUT;
+        -:   89:    }
+    #####:   90:    if (current_attempts >= MAX_ATTEMPTS) {
+branch  0 never executed
+branch  1 never executed
+    #####:   91:        return AuthStatus::ACCOUNT_LOCKED;
+        -:   92:    }
+    #####:   93:    if (provided_hash == stored_hash) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   94:        return AuthStatus::AUTHENTICATED;
+        -:   95:    }
+    #####:   96:    return AuthStatus::INVALID_CREDENTIALS;
+        -:   97:}
+        -:   98:
+function _ZN4bank12SessionTokenC2Emm called 5 returned 100% blocks executed 100%
+        5:   99:SessionToken::SessionToken(uint64_t issued_at, uint64_t timeout_seconds)
+        5:  100:    : issued_at_(issued_at), timeout_seconds_(timeout_seconds), revoked_(false) {}
+        -:  101:
+function _ZNK4bank12SessionToken8is_validEm called 6 returned 100% blocks executed 100%
+        6:  102:bool SessionToken::is_valid(uint64_t current_timestamp) const {
+        6:  103:    if (revoked_) {
+branch  0 taken 1 (fallthrough)
+branch  1 taken 5
+        1:  104:        return false;
+        -:  105:    }
+        5:  106:    if (current_timestamp < issued_at_) {
+branch  0 taken 1 (fallthrough)
+branch  1 taken 4
+        1:  107:        return false; // Time travel / clock skew invalid
+        -:  108:    }
+        4:  109:    return (current_timestamp - issued_at_) <= timeout_seconds_;
+        -:  110:}
+        -:  111:
+function _ZN4bank12SessionToken6revokeEv called 1 returned 100% blocks executed 100%
+        1:  112:void SessionToken::revoke() { revoked_ = true; }
+function _ZNK4bank12SessionToken10is_revokedEv called 1 returned 100% blocks executed 100%
+        1:  113:bool SessionToken::is_revoked() const { return revoked_; }
+        -:  114:
+function _ZN4bank17CurrencyConverterC2Ev called 0 returned 0% blocks executed 0%
+    #####:  115:CurrencyConverter::CurrencyConverter() {
+call    0 never executed
+    #####:  116:    rates_["USD_EUR"] = 0.92;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  117:    rates_["EUR_USD"] = 1.087;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  118:    rates_["USD_GBP"] = 0.79;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  119:    rates_["GBP_USD"] = 1.265;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  120:}
+call    0 never executed
+        -:  121:
+function _ZN4bank17CurrencyConverter8set_rateERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_d called 0 returned 0% blocks executed 0%
+    #####:  122:void CurrencyConverter::set_rate(const std::string &from_curr, const std::string &to_curr, double rate) {
+    #####:  123:    rates_[from_curr + "_" + to_curr] = rate;
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+    #####:  124:}
+        -:  125:
+function _ZNK4bank17CurrencyConverter7convertElRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_ called 0 returned 0% blocks executed 0%
+    #####:  126:long CurrencyConverter::convert(long amount_cents, const std::string &from_curr, const std::string &to_curr) const {
+    #####:  127:    if (amount_cents <= 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  128:        return 0;
+        -:  129:    }
+    #####:  130:    if (from_curr == to_curr) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  131:        return amount_cents;
+        -:  132:    }
+    #####:  133:    std::string key = from_curr + "_" + to_curr;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  134:    auto it = rates_.find(key);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  135:    if (it == rates_.end()) {
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  136:        throw std::invalid_argument("Unsupported currency pair: " + key);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+call    8 never executed
+call    9 never executed
+call   10 never executed
+        -:  137:    }
+    #####:  138:    return static_cast<long>(std::round(static_cast<double>(amount_cents) * it->second));
+call    0 never executed
+    #####:  139:}
+call    0 never executed
+call    1 never executed
+        -:  140:
+function _ZN4bank11FeeSchedule13calculate_feeElNS_11AccountTypeEi called 0 returned 0% blocks executed 0%
+    #####:  141:long FeeSchedule::calculate_fee(long amount_cents, AccountType type, int monthly_tx_count) {
+    #####:  142:    if (amount_cents <= 0) {
+branch  0 never executed
+branch  1 never executed
+    #####:  143:        return 0;
+        -:  144:    }
+    #####:  145:    if (monthly_tx_count <= 5) {
+branch  0 never executed
+branch  1 never executed
+    #####:  146:        return 0; // First 5 transactions free per month
+        -:  147:    }
+    #####:  148:    switch (type) {
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  149:        case AccountType::PREMIUM:
+    #####:  150:            return 10; // Flat 10 cents
+    #####:  151:        case AccountType::STUDENT:
+    #####:  152:            return 5;  // Flat 5 cents
+    #####:  153:        case AccountType::BUSINESS:
+    #####:  154:            return static_cast<long>(amount_cents * 0.005); // 0.5%
+    #####:  155:        case AccountType::STANDARD:
+        -:  156:        default:
+    #####:  157:            return static_cast<long>(amount_cents * 0.01);  // 1.0%
+        -:  158:    }
+        -:  159:}
+        -:  160:
+function _ZN4bank10AuditTrail12compute_hashERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEElj called 0 returned 0% blocks executed 0%
+    #####:  161:uint32_t AuditTrail::compute_hash(const std::string &tx_id, long amount, uint32_t prev_hash) {
+    #####:  162:    uint32_t h = prev_hash ^ 0x9e3779b9;
+    #####:  163:    for (char c : tx_id) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  164:        h = (h << 5) + h + static_cast<uint8_t>(c);
+call    0 never executed
+        -:  165:    }
+    #####:  166:    h ^= static_cast<uint32_t>(amount);
+    #####:  167:    return h;
+        -:  168:}
+        -:  169:
+function _ZN4bank10AuditTrail16verify_integrityERKSt6vectorINS_17TransactionRecordESaIS2_EE called 0 returned 0% blocks executed 0%
+    #####:  170:bool AuditTrail::verify_integrity(const std::vector<TransactionRecord> &records) {
+    #####:  171:    if (records.empty()) {
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  172:        return true;
+        -:  173:    }
+    #####:  174:    uint32_t expected_prev = 0;
+    #####:  175:    for (const auto &rec : records) {
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    #####:  176:        if (rec.prev_hash != expected_prev) {
+branch  0 never executed
+branch  1 never executed
+    #####:  177:            return false;
+        -:  178:        }
+    #####:  179:        uint32_t calculated = compute_hash(rec.tx_id, rec.amount, rec.prev_hash);
+call    0 never executed
+    #####:  180:        if (calculated != rec.hash) {
+branch  0 never executed
+branch  1 never executed
+    #####:  181:            return false;
+        -:  182:        }
+    #####:  183:        expected_prev = rec.hash;
+call    0 never executed
+        -:  184:    }
+    #####:  185:    return true;
+        -:  186:}
+        -:  187:
+        -:  188:} // namespace bank

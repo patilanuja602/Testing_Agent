@@ -1,0 +1,25 @@
+#include "sensor_monitoring.h"
+#include <assert.h>
+#include <stdint.h>
+#include <stdio.h>
+
+int main() {
+    // Test case 1: NULL payload pointer
+    assert(sensor_uart_crc16_verify(NULL, 5, 0xFFFF) == SENSOR_ERR_NULL_PTR);
+
+    // Test case 2: Zero length
+    assert(sensor_uart_crc16_verify((uint8_t *)"\x01\x02\x03\x04", 0, 0xFFFF) == SENSOR_ERR_OUT_OF_RANGE);
+
+    // Test case 3: Corrupted/mismatched CRC
+    uint8_t payload1[] = {0x01, 0x02, 0x03, 0x04};
+    uint16_t expected_crc1 = 0x1234; // Example expected CRC
+    assert(sensor_uart_crc16_verify(payload1, sizeof(payload1), 0x5678) == SENSOR_ERR_CRC_MISMATCH);
+
+    // Test case 4: Valid payload with matching CRC
+    uint8_t payload2[] = {0x01, 0x02, 0x03, 0x04};
+    uint16_t expected_crc2 = 0x1234; // Example expected CRC
+    assert(sensor_uart_crc16_verify(payload2, sizeof(payload2), expected_crc2) == SENSOR_OK);
+
+    printf("All tests passed successfully.\n");
+    return 0;
+}

@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_CPP-04
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_CPP-04: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-04.cpp:23: int main(): Assertion `std::abs(result - 500.0) < 1e-6' failed.
+

@@ -1,0 +1,10 @@
+function_id,run_id,seed,temperature,test_count,compile_success,exec_success,exec_rc,line_coverage,branch_coverage,eval_speed_ts,wall_time_sec
+C-01,Run-1,42,0.2,9,True,True,0,0.0,0.0,35.71,8.07641887664795
+C-01,Run-2,101,0.2,9,True,True,0,0.0,0.0,35.79,8.775119304656982
+C-01,Run-3,202,0.2,7,True,True,0,0.0,0.0,35.77,7.523913145065308
+CPP-01,Run-1,42,0.2,20,True,False,-6,0.0,0.0,35.61,16.29373788833618
+CPP-01,Run-2,101,0.2,22,True,False,-6,0.0,0.0,35.59,14.499487161636353
+CPP-01,Run-3,202,0.2,20,True,False,-6,0.0,0.0,35.6,17.736076831817627
+C-04,Run-1,42,0.2,8,True,True,0,0.0,0.0,34.51,9.409677505493164
+C-04,Run-2,101,0.2,8,True,True,0,0.0,0.0,34.7,9.52767825126648
+C-04,Run-3,202,0.2,8,True,True,0,0.0,0.0,35.52,9.339246273040771

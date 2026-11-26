@@ -1,0 +1,18 @@
+Command: g++ -std=c++17 -O0 -g -fprofile-arcs -ftest-coverage -I/home/gitadmin/Documents/Anuja/benchmark_projects/banking_transactions_cpp/include /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-08.cpp /home/gitadmin/Documents/Anuja/benchmark_projects/banking_transactions_cpp/src/banking_transactions.cpp -o /tmp/bin_test_CPP-08
+Return code: 1
+=== STDOUT ===
+
+=== STDERR ===
+In file included from /usr/include/c++/11/cassert:44,
+                 from /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-08.cpp:3:
+/home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-08.cpp: In function ‘int main()’:
+/home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-08.cpp:19:76: error: ‘round’ is not a member of ‘std’
+   19 |     assert(converter.convert(1000, "USD", "EUR") == static_cast<long>(std::round(1000 * 0.92)));
+      |                                                                            ^~~~~
+/home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-08.cpp:31:76: error: ‘round’ is not a member of ‘std’
+   31 |     assert(converter.convert(1000, "USD", "JPY") == static_cast<long>(std::round(1000 * 110.5)));
+      |                                                                            ^~~~~
+/home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-08.cpp:35:76: error: ‘round’ is not a member of ‘std’
+   35 |     assert(converter.convert(1000, "JPY", "USD") == static_cast<long>(std::round(1000 * 0.009045)));
+      |                                                                            ^~~~~
+

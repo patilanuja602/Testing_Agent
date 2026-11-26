@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_C-10
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_C-10: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-10.c:16: main: Assertion `sensor_fsm_step(FSM_ACCELERATING, CMD_NONE, 100.0f, 100.0f, false) == FSM_ACCELERATING' failed.
+

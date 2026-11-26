@@ -1,0 +1,12 @@
+{
+  "func_id": "C-10",
+  "seed": 42,
+  "temperature": 0.2,
+  "wall_time_sec": 17.66505265235901,
+  "prompt_eval_ms": 310.82,
+  "prompt_eval_tokens": 517,
+  "prompt_eval_speed_ts": 1663.34,
+  "eval_ms": 14931.31,
+  "eval_tokens": 530,
+  "eval_speed_ts": 35.5
+}

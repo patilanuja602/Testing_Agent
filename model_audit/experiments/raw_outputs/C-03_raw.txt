@@ -1,0 +1,43 @@
+```c
+#include "sensor_monitoring.h"
+#include <assert.h>
+#include <stdio.h>
+
+int main() {
+    bool low_battery_warning;
+
+    // Test case 1: NULL pointer
+    assert(sensor_battery_soc_eval(50.0f, NULL) == SENSOR_ERR_NULL_PTR);
+
+    // Test case 2: out-of-range negative
+    assert(sensor_battery_soc_eval(-0.1f, &low_battery_warning) == SENSOR_ERR_OUT_OF_RANGE);
+
+    // Test case 3: out-of-range above 100
+    assert(sensor_battery_soc_eval(100.1f, &low_battery_warning) == SENSOR_ERR_OUT_OF_RANGE);
+
+    // Test case 4: boundary exactly 0.0f (warning true)
+    assert(sensor_battery_soc_eval(0.0f, &low_battery_warning) == SENSOR_OK);
+    assert(low_battery_warning == true);
+
+    // Test case 5: boundary below threshold 14.9f (warning true)
+    assert(sensor_battery_soc_eval(14.9f, &low_battery_warning) == SENSOR_OK);
+    assert(low_battery_warning == true);
+
+    // Test case 6: boundary at threshold 15.0f (warning false)
+    assert(sensor_battery_soc_eval(15.0f, &low_battery_warning) == SENSOR_OK);
+    assert(low_battery_warning == false);
+
+    // Test case 7: boundary above threshold 15.1f (warning false)
+    assert(sensor_battery_soc_eval(15.1f, &low_battery_warning) == SENSOR_OK);
+    assert(low_battery_warning == false);
+
+    // Test case 8: upper bound 100.0f (warning false)
+    assert(sensor_battery_soc_eval(100.0f, &low_battery_warning) == SENSOR_OK);
+    assert(low_battery_warning == false);
+
+    printf("All tests passed successfully.\n");
+    return 0;
+}
+``` [end of text]
+
+

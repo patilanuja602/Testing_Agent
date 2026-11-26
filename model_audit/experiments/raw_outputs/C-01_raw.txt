@@ -1,0 +1,31 @@
+```c
+#include "sensor_monitoring.h"
+#include <assert.h>
+#include <stdio.h>
+
+int main() {
+    // Test minimum valid value
+    assert(sensor_raw_valid(0) == true);
+
+    // Test maximum valid value
+    assert(sensor_raw_valid(4095) == true);
+
+    // Test value below minimum
+    assert(sensor_raw_valid(-1) == false);
+    assert(sensor_raw_valid(-1000) == false);
+
+    // Test value above maximum
+    assert(sensor_raw_valid(4096) == false);
+    assert(sensor_raw_valid(10000) == false);
+
+    // Test normal nominal values
+    assert(sensor_raw_valid(1000) == true);
+    assert(sensor_raw_valid(2000) == true);
+    assert(sensor_raw_valid(3000) == true);
+
+    printf("All tests passed successfully.\n");
+    return 0;
+}
+``` [end of text]
+
+

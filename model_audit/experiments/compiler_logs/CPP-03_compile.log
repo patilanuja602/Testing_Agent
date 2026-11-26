@@ -1,0 +1,12 @@
+Command: g++ -std=c++17 -O0 -g -fprofile-arcs -ftest-coverage -I/home/gitadmin/Documents/Anuja/benchmark_projects/banking_transactions_cpp/include /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-03.cpp /home/gitadmin/Documents/Anuja/benchmark_projects/banking_transactions_cpp/src/banking_transactions.cpp -o /tmp/bin_test_CPP-03
+Return code: 1
+=== STDOUT ===
+
+=== STDERR ===
+/home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-03.cpp:10:10: error: ‘bool bank::MockAccount::withdraw(long int)’ marked ‘override’, but does not override
+   10 |     bool withdraw(long amount) override {
+      |          ^~~~~~~~
+/home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-03.cpp:14:10: error: ‘bool bank::MockAccount::deposit(long int)’ marked ‘override’, but does not override
+   14 |     bool deposit(long amount) override {
+      |          ^~~~~~~
+

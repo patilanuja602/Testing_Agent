@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_CPP-01_rep_101
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_CPP-01_rep_101: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-01_rep_101.cpp:27: int main(): Assertion `acc.withdraw(300) == bank::WithdrawResult::DAILY_LIMIT_EXCEEDED' failed.
+

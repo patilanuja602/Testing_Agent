@@ -1,0 +1,41 @@
+{
+  "C-01": {
+    "C-01_M1_boundary_min": {
+      "status": "KILLED",
+      "exit_code": -6,
+      "log": "bin_C-01_M1_boundary_min: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-01.c:7: main: Assertion `sensor_raw_valid(0) == true' failed.\n"
+    },
+    "C-01_M2_boundary_max": {
+      "status": "KILLED",
+      "exit_code": -6,
+      "log": "bin_C-01_M2_boundary_max: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-01.c:10: main: Assertion `sensor_raw_valid(4095) == true' failed.\n"
+    },
+    "C-01_M3_inverted_logic": {
+      "status": "KILLED",
+      "exit_code": -6,
+      "log": "bin_C-01_M3_inverted_logic: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-01.c:7: main: Assertion `sensor_raw_valid(0) == true' failed.\n"
+    },
+    "C-01_M4_always_true": {
+      "status": "KILLED",
+      "exit_code": -6,
+      "log": "bin_C-01_M4_always_true: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-01.c:13: main: Assertion `sensor_raw_valid(-1) == false' failed.\n"
+    }
+  },
+  "CPP-01": {
+    "CPP-01_M1_order_precedence": {
+      "status": "KILLED",
+      "exit_code": -6,
+      "log": "bin_CPP-01_M1_order_precedence: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-01.cpp:16: int main(): Assertion `account.withdraw(1500) == bank::WithdrawResult::INSUFFICIENT_FUNDS' failed.\n"
+    },
+    "CPP-01_M2_boundary_ge": {
+      "status": "KILLED",
+      "exit_code": -6,
+      "log": "bin_CPP-01_M2_boundary_ge: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-01.cpp:28: int main(): Assertion `account.withdraw(200) == bank::WithdrawResult::SUCCESS' failed.\n"
+    },
+    "CPP-01_M3_omitted_deduction": {
+      "status": "KILLED",
+      "exit_code": -6,
+      "log": "bin_CPP-01_M3_omitted_deduction: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-01.cpp:33: int main(): Assertion `account.withdraw(1000) == bank::WithdrawResult::SUCCESS' failed.\n"
+    }
+  }
+}

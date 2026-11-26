@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_C-02
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_C-02: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-02.c:28: main: Assertion `fabsf(temp_c - 0.0f) < EPSILON' failed.
+

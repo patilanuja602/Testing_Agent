@@ -1,0 +1,30 @@
+#include "banking_transactions.hpp"
+#include <cassert>
+#include <cstdint>
+
+int main() {
+    // Test active token within timeout
+    bank::SessionToken token1(100, 10);
+    assert(token1.is_valid(110) == true);
+
+    // Test token exactly at timeout boundary
+    bank::SessionToken token2(100, 10);
+    assert(token2.is_valid(110) == true);
+    assert(token2.is_valid(120) == false);
+
+    // Test expired token
+    bank::SessionToken token3(100, 10);
+    assert(token3.is_valid(130) == false);
+
+    // Test clock skew timestamp
+    bank::SessionToken token4(100, 10);
+    assert(token4.is_valid(50) == false);
+
+    // Test token revocation
+    bank::SessionToken token5(100, 10);
+    token5.revoke();
+    assert(token5.is_valid(110) == false);
+    assert(token5.is_revoked() == true);
+
+    return 0;
+}

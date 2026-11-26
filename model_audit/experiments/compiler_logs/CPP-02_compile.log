@@ -1,0 +1,6 @@
+Command: g++ -std=c++17 -O0 -g -fprofile-arcs -ftest-coverage -I/home/gitadmin/Documents/Anuja/benchmark_projects/banking_transactions_cpp/include /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_CPP-02.cpp /home/gitadmin/Documents/Anuja/benchmark_projects/banking_transactions_cpp/src/banking_transactions.cpp -o /tmp/bin_test_CPP-02
+Return code: 0
+=== STDOUT ===
+
+=== STDERR ===
+

@@ -1,0 +1,42 @@
+```c
+#include "sensor_monitoring.h"
+#include <assert.h>
+#include <math.h>
+#include <stdio.h>
+
+#define EPSILON 1e-6
+
+int main() {
+    // Test case 1: NULL table pointer
+    CalibrationPoint table1[] = {{1.0, 2.0}, {2.0, 4.0}};
+    float calibrated_out1;
+    assert(sensor_calibration_lookup(1.5, NULL, 2, &calibrated_out1) == SENSOR_ERR_NULL_PTR);
+
+    // Test case 2: NULL output pointer
+    assert(sensor_calibration_lookup(1.5, table1, 2, NULL) == SENSOR_ERR_NULL_PTR);
+
+    // Test case 3: Empty table (size 0)
+    assert(sensor_calibration_lookup(1.5, NULL, 0, &calibrated_out1) == SENSOR_ERR_EMPTY_TABLE);
+
+    // Test case 4: Clamping at/below lower bound
+    assert(sensor_calibration_lookup(0.5, table1, 2, &calibrated_out1) == SENSOR_OK);
+    assert(fabs(calibrated_out1 - 2.0) < EPSILON);
+
+    // Test case 5: Clamping at/above upper bound
+    assert(sensor_calibration_lookup(2.5, table1, 2, &calibrated_out1) == SENSOR_OK);
+    assert(fabs(calibrated_out1 - 4.0) < EPSILON);
+
+    // Test case 6: Exact point match on table entry
+    assert(sensor_calibration_lookup(1.0, table1, 2, &calibrated_out1) == SENSOR_OK);
+    assert(fabs(calibrated_out1 - 2.0) < EPSILON);
+
+    // Test case 7: Interpolation between points (e.g. midway)
+    assert(sensor_calibration_lookup(1.5, table1, 2, &calibrated_out1) == SENSOR_OK);
+    assert(fabs(calibrated_out1 - 3.0) < EPSILON);
+
+    printf("All tests passed.\n");
+    return 0;
+}
+``` [end of text]
+
+

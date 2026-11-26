@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_C-08
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_C-08: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-08.c:34: main: Assertion `sensor_circular_buffer_push(&buf, sample) == SENSOR_OK' failed.
+

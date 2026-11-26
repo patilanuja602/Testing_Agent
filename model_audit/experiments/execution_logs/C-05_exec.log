@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_C-05
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_C-05: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-05.c:10: main: Assertion `sensor_can_frame_validate(0x2F0, 8, 0, 0) == SENSOR_OK' failed.
+

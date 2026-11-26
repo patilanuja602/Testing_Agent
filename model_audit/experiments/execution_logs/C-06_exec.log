@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_C-06
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_C-06: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-06.c:21: main: Assertion `sensor_uart_crc16_verify(payload2, sizeof(payload2), expected_crc2) == SENSOR_OK' failed.
+

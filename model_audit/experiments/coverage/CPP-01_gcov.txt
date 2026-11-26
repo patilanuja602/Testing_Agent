@@ -1,0 +1,4 @@
+No executable lines
+
+/home/gitadmin/Documents/Anuja/benchmark_projects/banking_transactions_cpp/src/banking_transactions.gcno:cannot open notes file
+/home/gitadmin/Documents/Anuja/benchmark_projects/banking_transactions_cpp/src/banking_transactions.gcda:cannot open data file, assuming not executed

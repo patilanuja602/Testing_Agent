@@ -1,0 +1,7 @@
+Binary: /tmp/bin_test_C-09
+Return code: -6
+=== STDOUT ===
+
+=== STDERR ===
+bin_test_C-09: /home/gitadmin/Documents/Anuja/model_audit/experiments/generated_tests/test_C-09.c:18: main: Assertion `sensor_calibration_lookup(1.5, NULL, 0, &calibrated_out1) == SENSOR_ERR_EMPTY_TABLE' failed.
+
